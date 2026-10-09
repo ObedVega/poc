@@ -1,18 +1,19 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Dispatch para talleres</title>
+<title>Dispatch for Repair Shops</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* Una sola columna tipo celular: el flujo es agente, orden, firma, pago, recibo. */
+/* Single phone-width column: agent, work order, signature, email, code payment, daily close. */
 :root{--bg:#f3f3f0;--card:#ffffff;--ink:#1b1f23;--mute:#626a72;--line:#d7d9db;--accent:#f2b705;--on-accent:#1b1f23;--ok:#1d7a44;--err:#b3261e;--bub-me:#1b1f23;--bub-me-ink:#ffffff;--bub-ag:#ecece8;--font:Barlow,system-ui,-apple-system,"Segoe UI",sans-serif}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171a;--card:#1e2226;--ink:#eceef0;--mute:#9aa2a9;--line:#353b41;--ok:#4cc27f;--err:#ff8a80;--bub-me:#f2b705;--bub-me-ink:#1b1f23;--bub-ag:#2a3036;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#14171a;--card:#1e2226;--ink:#eceef0;--mute:#9aa2a9;--line:#353b41;--ok:#4cc27f;--err:#ff8a80;--bub-me:#f2b705;--bub-me-ink:#1b1f23;--bub-ag:#2a3036;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.4;padding-inline:16px;padding-block:16px}
 main{max-width:520px;margin:0 auto}
 h1{font-size:26px;line-height:1.15;margin:8px 0 4px;text-wrap:balance}
 p.sub{color:var(--mute);margin:0 0 14px}
-nav{display:flex;gap:6px;margin-bottom:14px}
-nav button{flex:1;min-width:0;padding:10px 2px;border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:8px;font:600 13px var(--font)}
+nav{display:flex;gap:4px;margin-bottom:14px}
+nav button{flex:1;min-width:0;padding:10px 0;border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:8px;font:600 12px var(--font)}
 nav button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
@@ -22,9 +23,11 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 .btn{display:block;width:100%;margin-top:16px;padding:14px;border:0;border-radius:8px;background:var(--accent);color:var(--on-accent);font:700 17px var(--font)}
 .btn:disabled{opacity:.4}
 .btn.alt{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{margin-top:8px;padding:10px;font-size:15px}
 canvas{display:block;width:100%;height:150px;border:1px dashed var(--mute);border-radius:8px;background:var(--bg);touch-action:none}
 table{width:100%;border-collapse:collapse}td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}td:last-child{text-align:right;padding-left:12px;white-space:nowrap}
 tr.tot td{font-weight:700;border-bottom:0;font-size:19px}
+.tag{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:0 7px;color:var(--mute);margin-left:6px;vertical-align:1px}
 .terms{max-height:130px;overflow:auto;font-size:14px;color:var(--mute);border:1px solid var(--line);border-radius:8px;padding:10px}
 .note{font-size:13px;color:var(--mute);margin:10px 0 0}
 .ok{color:var(--ok);font-weight:700}
@@ -39,169 +42,260 @@ tr.tot td{font-weight:700;border-bottom:0;font-size:19px}
 .ord b{display:block;margin-bottom:6px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .chips button{padding:8px 10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;font:400 14px var(--font);text-align:left}
+.mailhead{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.logo{flex:0 0 44px;height:44px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font:700 16px var(--font)}
+.mailhead small{display:block;color:var(--mute);font-size:13px}
+.meth{display:flex;justify-content:space-between;gap:12px;padding:6px 0}
+.meth span:last-child{font-weight:700}
+.steps{margin:12px 0 0;padding:0;list-style:none;font-size:15px}
+.steps li{padding:4px 0}
+.steps li.good{color:var(--ok);font-weight:700}
+.steps li.bad{color:var(--err);font-weight:700}
+.scroll{overflow-x:auto}
+a{color:var(--ink);font-weight:600}
 </style>
 <main>
-<h1>Dispatch para talleres de camiones</h1>
-<p class="sub">Prototipo: el agente atiende, arma la orden de trabajo, el cliente firma y paga. El pago es simulado y no mueve dinero real.</p>
-<nav id="nav"><button data-s="0" class="on">Agente</button><button data-s="1">Taller</button><button data-s="2">Cliente</button><button data-s="3">Pago</button><button data-s="4">Recibo</button></nav>
+<h1>Dispatch for truck repair shops</h1>
+<p class="sub">Prototype: the agent answers the driver, the customer signs and pays with a Comdata or EFS code, and the shop sees its daily close. Everything is simulated and no real money moves.</p>
+<nav id="nav"><button data-s="0" class="on">Agent</button><button data-s="1">Shop</button><button data-s="2">Customer</button><button data-s="3">Email</button><button data-s="4">Pay</button><button data-s="5">Close</button></nav>
 
 <section id="s0" class="card">
-  <b>Tú eres el conductor</b>
-  <p class="note" style="margin-top:2px">Cuéntale a Dispatch qué pasó. Escribe o toca una sugerencia.</p>
+  <b>You're the driver</b>
+  <p class="note" style="margin-top:2px">Tell Dispatch what happened. Type a message or tap a suggestion.</p>
   <div id="chat" aria-live="polite"></div>
   <form id="cf" class="row">
-    <input id="msg" placeholder="Escribe tu mensaje" autocomplete="off" aria-label="Mensaje al agente">
-    <button class="btn" id="snd" type="submit" style="margin:0;flex:0 0 92px">Enviar</button>
+    <input id="msg" placeholder="Type your message" autocomplete="off" aria-label="Message to the agent">
+    <button class="btn" id="snd" type="submit" style="margin:0;flex:0 0 92px">Send</button>
   </form>
   <div id="chips" class="chips"></div>
-  <button class="btn alt" id="rst" type="button">Nueva conversación</button>
-  <p class="note">Respuestas con guion para la demo. La versión real usa Claude para entender cualquier forma de contar el problema, en inglés o español, también por llamada.</p>
+  <button class="btn alt" id="rst" type="button">New conversation</button>
+  <p class="note">Scripted replies for the demo. The real version uses Claude to understand any way of describing the problem, in English or Spanish, and by phone call too.</p>
 </section>
 
 <section id="s1" class="card" hidden>
-  <b>Crear orden de trabajo a mano</b>
-  <label for="cli">Cliente (empresa)</label><input id="cli" value="Test Logistics">
-  <label for="drv">Conductor</label><input id="drv" value="Juan Pérez">
-  <label for="ctc">Celular o email del conductor</label><input id="ctc" value="+1 210 555 0100">
-  <label for="trk">Camión</label><input id="trk" value="Volvo 860, 2021">
-  <label for="svc">Servicio</label>
-  <select id="svc"><option value="225|Servicio en carretera (por hora)">Servicio en carretera, $225/hr</option><option value="285|Carretera fuera de horario (por hora)">Carretera fuera de horario, $285/hr</option><option value="189|Mano de obra en taller (por hora)">Mano de obra en taller, $189/hr</option><option value="249|Diagnóstico (por hora)">Diagnóstico, $249/hr</option></select>
-  <div class="row"><div><label for="hrs">Horas</label><input id="hrs" type="number" value="2" min="0.5" step="0.5"></div><div><label for="mil">Millas</label><input id="mil" type="number" value="20" min="0"></div></div>
-  <label for="prt">Piezas ($)</label><input id="prt" type="number" value="0" min="0">
-  <button class="btn" id="send" type="button">Enviar orden al cliente</button>
-  <p class="note">Es lo mismo que hace el agente, pero llenando el formulario. En la versión real se envía un link por SMS o email.</p>
+  <b>Create a work order by hand</b>
+  <label for="cli">Customer (company)</label><input id="cli" value="Test Logistics">
+  <label for="drv">Driver</label><input id="drv" value="Juan Perez">
+  <label for="ctc">Driver's cell or email</label><input id="ctc" value="+1 210 555 0100">
+  <label for="trk">Truck</label><input id="trk" value="Volvo 860, 2021">
+  <label for="svc">Service</label>
+  <select id="svc"><option value="225|Roadside service (per hour)">Roadside service, $225/hr</option><option value="285|After-hours roadside (per hour)">After-hours roadside, $285/hr</option><option value="189|Shop labor (per hour)">Shop labor, $189/hr</option><option value="249|Diagnostics (per hour)">Diagnostics, $249/hr</option></select>
+  <div class="row"><div><label for="hrs">Hours</label><input id="hrs" type="number" value="2" min="0.5" step="0.5"></div><div><label for="mil">Miles</label><input id="mil" type="number" value="20" min="0"></div></div>
+  <label for="prt">Parts ($)</label><input id="prt" type="number" value="0" min="0">
+  <button class="btn" id="send" type="button">Send order to customer</button>
+  <p class="note">This is what the agent does, but by filling out a form. The real version sends a link by text or email.</p>
 </section>
 
 <section id="s2" class="card" hidden>
-  <b>Lo que ve el cliente en su celular</b>
+  <b>What the customer sees on their phone</b>
   <p class="note" id="wo"></p>
-  <div class="terms">Autorizo a Truck &amp; Tire Masters a realizar diagnóstico, servicio en carretera y reparaciones en mi vehículo. Las reparaciones en carretera pueden ser temporales y sin garantía. No hay reembolsos por mano de obra realizada, viaje o diagnóstico. Recargo de 3.5% por pago con tarjeta. El vehículo puede ser retenido hasta el pago total.</div>
-  <label for="sig">Firma aquí</label>
+  <div class="terms">I authorize Truck &amp; Tire Masters to perform diagnostics, roadside service and repairs on my vehicle. Roadside repairs may be temporary and carry no warranty. No refunds for completed labor, travel time or diagnostics. Convenience fee: 3.5% for card payments and 3% for codes or checks. The vehicle may be held until paid in full.</div>
+  <label for="sig">Sign here</label>
   <canvas id="sig"></canvas>
-  <button class="btn alt" id="clr" type="button">Borrar firma</button>
-  <button class="btn" id="appr" type="button" disabled>Aprobar orden de trabajo</button>
+  <button class="btn alt" id="clr" type="button">Clear signature</button>
+  <button class="btn" id="appr" type="button" disabled>Approve work order</button>
 </section>
 
 <section id="s3" class="card" hidden>
-  <b>Factura</b>
-  <table id="inv"></table>
-  <label>Forma de pago</label>
-  <div class="pm" id="pm"><button data-m="card" class="on" type="button">Tarjeta</button><button data-m="ach" type="button">ACH</button><button data-m="code" type="button">Money code</button></div>
-  <div id="cardf">
-    <label for="cn">Número de tarjeta</label><input id="cn" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="19">
-    <div class="row"><div><label for="ce">Vence</label><input id="ce" placeholder="MM/AA" maxlength="5"></div><div><label for="cc">CVC</label><input id="cc" inputmode="numeric" placeholder="123" maxlength="4"></div></div>
-  </div>
-  <div id="codef" hidden><label for="mc">Código de 10 dígitos</label><input id="mc" inputmode="numeric" placeholder="Ingrese el money code"><p class="note">En la versión real se validaría con la red que emite el código. Aquí solo se registra.</p></div>
-  <div id="achf" hidden><p class="note">Sin recargo. En la versión real se conectaría la cuenta bancaria con un proveedor de pagos.</p></div>
-  <p class="err" id="perr" role="alert"></p>
-  <button class="btn" id="pay" type="button">Pagar</button>
+  <p class="note" style="margin:0 0 10px">The email the payer receives as soon as the order is signed.</p>
+  <div class="mailhead"><div class="logo">TM</div><div><b>Your invoice is ready</b><small>Truck &amp; Tire Masters LLC</small></div></div>
+  <p style="margin:0 0 10px">Complete your payment with the button below.</p>
+  <table><tr><td>Transaction</td><td id="mtx"></td></tr><tr><td>Subtotal</td><td id="msub"></td></tr></table>
+  <p class="note">The total includes a convenience fee and changes with the payment method.</p>
+  <div id="mmeth" style="margin-top:8px"></div>
+  <button class="btn" id="viewinv" type="button">View invoice and pay</button>
+  <p class="note" style="text-align:center">Powered by RoadPay (working name)</p>
 </section>
 
 <section id="s4" class="card" hidden>
-  <p class="ok" style="font-size:20px;margin:0 0 6px">Pago recibido</p>
-  <table id="rec"></table>
-  <p class="note">Quedan guardados la orden firmada, la factura y el pago. Esa es la evidencia si hay una disputa.</p>
-  <button class="btn alt" id="again" type="button">Atender otra llamada</button>
+  <div id="payform">
+    <b>Pay your invoice for Truck &amp; Tire Masters LLC</b>
+    <table id="inv" style="margin-top:8px"></table>
+    <label>Payment method</label>
+    <div class="pm" id="pm"><button data-m="code" class="on" type="button">Code or check</button><button data-m="card" type="button">Card</button></div>
+
+    <div id="codef">
+      <label>Network that issued the code</label>
+      <div class="pm" id="nets"><button data-n="Comdata" class="on" type="button">Comdata</button><button data-n="EFS" type="button">EFS</button><button data-n="T-Chek" type="button">T-Chek</button></div>
+      <label for="mc" id="mclab">Comdata Express Code</label>
+      <input id="mc" inputmode="numeric" placeholder="Enter the code" autocomplete="off">
+      <div class="row"><button class="btn alt sm" id="tgood" type="button">Test code</button><button class="btn alt sm" id="tbad" type="button">Declined code</button></div>
+      <p class="note">Please note that checks cannot be refunded.</p>
+      <label>Additional information (may be required)</label>
+      <div class="row"><input id="fn" placeholder="First name" aria-label="First name"><input id="ln" placeholder="Last name" aria-label="Last name"></div>
+      <input id="dn" placeholder="Driver number" aria-label="Driver number" style="margin-top:8px">
+      <div class="row" style="margin-top:8px"><input id="un" placeholder="Unit number" aria-label="Unit number"><input id="tn" placeholder="Trip number" aria-label="Trip number"></div>
+    </div>
+
+    <div id="cardf" hidden>
+      <label for="cn">Card number</label><input id="cn" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="19">
+      <div class="row"><div><label for="ce">Expires</label><input id="ce" placeholder="MM/YY" maxlength="5"></div><div><label for="cc">CVC</label><input id="cc" inputmode="numeric" placeholder="123" maxlength="4"></div></div>
+    </div>
+
+    <p class="err" id="perr" role="alert"></p>
+    <button class="btn" id="pay" type="button">Pay</button>
+    <ul class="steps" id="vsteps" aria-live="polite"></ul>
+  </div>
+
+  <div id="payok" hidden>
+    <p class="ok" style="font-size:20px;margin:0 0 6px">Payment received</p>
+    <table id="rec"></table>
+    <p class="note" id="recnote"></p>
+    <button class="btn" id="goclose" type="button">See the daily close</button>
+    <button class="btn alt" id="again" type="button">Take another call</button>
+  </div>
+</section>
+
+<section id="s5" class="card" hidden>
+  <b>Daily close</b>
+  <p class="note" style="margin-top:2px">Cutoff at 11:00 PM. Deposit at 6:00 AM. Rows tagged "Example" are sample data; rows tagged "Test" come from payments you made in this demo.</p>
+  <div class="scroll"><table id="led"></table></div>
+  <label for="adv">Advance fee charged to the shop (%)</label>
+  <input id="adv" type="number" value="1" min="0" max="10" step="0.1">
+  <p class="note">A demo assumption, not a price. Change it to see the effect.</p>
+  <table id="sum" style="margin-top:10px"></table>
+  <p class="note" id="floatn"></p>
+  <button class="btn" id="closeday" type="button">Close the day and schedule deposit</button>
+  <p class="ok" id="closed" hidden></p>
 </section>
 </main>
 <script>
 var $=function(i){return document.getElementById(i)};
-var st={step:0,signed:false,paid:false,method:"card",o:null};
-var money=function(n){return "$"+n.toFixed(2)};
+var st={step:0,signed:false,paid:false,method:"code",net:"Comdata",o:null,used:{},ledger:[],closed:false};
+var money=function(n){return "$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})};
+var cents=function(n){return Math.round(n*100)/100};
 var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+var nowT=function(){return new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})};
+var RATE={code:0.03,card:0.035};
 
-/* ---------- navegación ---------- */
+/* Sample rows so the daily close doesn't open empty */
+st.ledger=[
+ {t:"9:42 AM",net:"EFS",base:485.00,tag:"Example"},
+ {t:"11:15 AM",net:"Comdata",base:1240.50,tag:"Example"},
+ {t:"2:30 PM",net:"EFS",base:310.00,tag:"Example"},
+ {t:"6:05 PM",net:"T-Chek",base:760.00,tag:"Example"}
+];
+
+/* ---------- navigation ---------- */
 function show(n){
   st.step=n;
-  [0,1,2,3,4].forEach(function(i){$("s"+i).hidden=(i!==n)});
+  [0,1,2,3,4,5].forEach(function(i){$("s"+i).hidden=(i!==n)});
   document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",+b.dataset.s===n)});
   if(n===2)clr();
-  if(n===3){$("perr").textContent="";buildInv()}
+  if(n===3)buildMail();
+  if(n===4){$("perr").textContent="";buildInv()}
+  if(n===5)buildClose();
   window.scrollTo(0,0);
 }
 document.querySelectorAll("#nav button").forEach(function(b){b.onclick=function(){
   var n=+b.dataset.s;
-  if(n<=1||(n===2&&st.o)||(n===3&&st.signed)||(n===4&&st.paid))show(n);
+  if(n<=1||n===5||(n===2&&st.o)||((n===3||n===4)&&st.signed))show(n);
 }});
 
-/* ---------- precios ---------- */
+/* ---------- pricing ---------- */
 function lines(){
   var o=st.o,t=o.svc.split("|"),r=+t[0],L=[[t[1]+" × "+o.hrs,r*o.hrs]];
-  if(o.mil>0)L.push(["Millaje × "+o.mil+" mi ($2.48)",o.mil*2.48]);
-  if(o.prt>0)L.push(["Piezas",o.prt]);
+  if(o.mil>0)L.push(["Mileage × "+o.mil+" mi ($2.48)",o.mil*2.48]);
+  if(o.prt>0)L.push(["Parts",o.prt]);
   return L;
 }
-function total(){return lines().reduce(function(a,l){return a+l[1]},0)}
+function total(){return cents(lines().reduce(function(a,l){return a+l[1]},0))}
 function newOrder(o){st.o=o;st.signed=false;st.paid=false;$("appr").disabled=true;
-  $("wo").textContent="Orden "+o.id+" · "+o.cli+" · "+o.trk+(o.problem?" · "+o.problem:"")+(o.loc?" · Ubicación: "+o.loc:"")}
+  $("wo").textContent="Order "+o.id+" · "+o.cli+" · "+o.trk+(o.problem?" · "+o.problem:"")+(o.loc?" · Location: "+o.loc:"")}
 
-/* ---------- agente Dispatch (simulado) ---------- */
+/* ---------- Dispatch agent (simulated) ---------- */
 var ag={ask:"problem",d:{}};
 var chat=$("chat");
 function say(who,text){var d=document.createElement("div");d.className="b "+who;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
 function agentSay(text,after){setTimeout(function(){say("ag",text);if(after)after()},450)}
 function setChips(){
-  var map={problem:["Se me ponchó una llanta en la I-35 cerca de Pearsall","El camión no enciende, estoy en San Antonio","Tuve un accidente"],
-           loc:["I-35 sur, milla 85, cerca de Pearsall"],truck:["Volvo 860, 2021"],co:["Test Logistics"],ph:["+1 210 555 0100"]};
+  var map={problem:["I got a flat tire on I-35 near Pearsall","My truck won't start, I'm in San Antonio","I had an accident"],
+           loc:["Text me the link","I-35 south, mile marker 85, near Pearsall"],truck:["Volvo 860, 2021"],co:["Test Logistics"],ph:["+1 210 555 0100"]};
   var c=$("chips");c.innerHTML="";
   (map[ag.ask]||[]).forEach(function(t){var b=document.createElement("button");b.type="button";b.textContent=t;b.onclick=function(){send(t)};c.appendChild(b)});
 }
 function kind(t){
-  if(/llanta|tire|ponch|pinch/i.test(t))return "llanta ponchada";
-  if(/enciend|arranc|start|no prende/i.test(t))return "falla de arranque";
-  if(/def|check engine|luz|motor|engine/i.test(t))return "falla de motor o DEF";
-  return "falla mecánica";
+  if(/tire|flat|blowout|llanta|ponch/i.test(t))return "flat tire";
+  if(/won'?t start|no start|dead battery|crank|enciend|arranc/i.test(t))return "won't start";
+  if(/\bdef\b|check engine|engine|motor/i.test(t))return "engine or DEF fault";
+  return "mechanical issue";
 }
 function nextAsk(){
   var d=ag.d;
-  if(!d.loc){ag.ask="loc";agentSay("¿Dónde está exactamente? Dígame carretera, salida o milla.",setChips)}
-  else if(!d.truck){ag.ask="truck";agentSay("¿Qué camión es? Marca, modelo y año.",setChips)}
-  else if(!d.co){ag.ask="co";agentSay("¿A nombre de qué empresa va el servicio?",setChips)}
-  else if(!d.ph){ag.ask="ph";agentSay("¿A qué celular le mando el link para firmar?",setChips)}
+  if(!d.loc){ag.ask="loc";agentSay((d.hint?"You said "+d.hint+". ":"")+"Can I text you a link to share your exact location? It's faster and more accurate than describing it. You can also type it.",setChips)}
+  else if(!d.truck){ag.ask="truck";agentSay("What truck is it? Make, model and year.",setChips)}
+  else if(!d.co){ag.ask="co";agentSay("What company is the service for?",setChips)}
+  else if(!d.ph){ag.ask="ph";agentSay("What cell number should I text the signing link to?",setChips)}
   else finish();
 }
 function finish(){
   ag.ask="done";setChips();$("msg").disabled=true;$("snd").disabled=true;
-  var d=ag.d,h=new Date().getHours(),after=(h<7||h>=18),rate=after?285:225,label=after?"Carretera fuera de horario (por hora)":"Servicio en carretera (por hora)";
-  newOrder({cli:d.co,drv:"Conductor",ctc:d.ph,trk:d.truck,svc:rate+"|"+label,hrs:2,mil:25,prt:0,id:Math.floor(100000+Math.random()*900000),problem:kind(d.problem),loc:d.loc});
-  agentSay("Listo. Armé su orden de trabajo con un estimado y le mandé el link por SMS. Ábralo, revise y firme.",function(){
-    var s=say("sms","SMS a "+d.ph+": Truck Masters. Firme su orden de trabajo y pague aquí: dispatch.example/o/"+st.o.id+" (simulado)");
+  var d=ag.d,h=new Date().getHours(),after=(h<7||h>=18),rate=after?285:225,label=after?"After-hours roadside (per hour)":"Roadside service (per hour)";
+  newOrder({cli:d.co,drv:"Driver",ctc:d.ph,trk:d.truck,svc:rate+"|"+label,hrs:2,mil:25,prt:0,id:Math.floor(100000+Math.random()*900000),problem:kind(d.problem),loc:d.loc,coords:d.coords});
+  agentSay("Done. I built your work order with an estimate and texted you the link. Open it, review it and sign.",function(){
+    say("sms","SMS to "+d.ph+": Truck Masters. Sign your work order here: dispatch.example/o/"+st.o.id+" (simulated)");
     var box=document.createElement("div");box.className="ord";
     var rows="";lines().forEach(function(l){rows+="<tr><td>"+esc(l[0])+"</td><td>"+money(l[1])+"</td></tr>"});
-    rows+='<tr class="tot"><td>Estimado</td><td>'+money(total())+"</td></tr>";
-    box.innerHTML="<b>Orden "+st.o.id+"</b><div class='note' style='margin:0 0 6px'>"+esc(st.o.cli)+" · "+esc(st.o.trk)+" · "+esc(st.o.problem)+"</div><table>"+rows+"</table><p class='note'>El precio final depende del tiempo real de trabajo. Tarifa "+(after?"fuera de horario":"de día")+" según la hora actual.</p>";
-    var go=document.createElement("button");go.type="button";go.className="btn";go.textContent="Abrir el link como cliente";go.onclick=function(){show(2)};
+    rows+='<tr class="tot"><td>Estimate</td><td>'+money(total())+"</td></tr>";
+    box.innerHTML="<b>Order "+st.o.id+"</b><div class='note' style='margin:0 0 6px'>"+esc(st.o.cli)+" · "+esc(st.o.trk)+" · "+esc(st.o.problem)+"</div><table>"+rows+"</table>"+(st.o.coords?"<p class='note'>Driver location: "+esc(st.o.loc)+" · <a href='"+mapsUrl(st.o.coords)+"' target='_blank' rel='noopener'>Open in Maps</a></p>":"")+"<p class='note'>The final price depends on actual work time. "+(after?"After-hours":"Daytime")+" rate, based on the current time.</p>";
+    var go=document.createElement("button");go.type="button";go.className="btn";go.textContent="Open the link as the customer";go.onclick=function(){show(2)};
     box.appendChild(go);chat.appendChild(box);chat.scrollTop=chat.scrollHeight;
   });
 }
 function send(text){
-  text=(text||"").trim();if(!text||ag.ask==="done"||ag.ask==="human")return;
+  text=(text||"").trim();if(!text||ag.ask==="done"||ag.ask==="human"||ag.ask==="wait")return;
   say("me",text);$("msg").value="";
-  if(/accidente|incendio|fuego|herid|humo|crash|fire|injur/i.test(text)){
+  if(/accident|fire|smoke|injur|hurt|crash|accidente|incendio|fuego|herid|humo/i.test(text)){
     ag.ask="human";setChips();$("msg").disabled=true;$("snd").disabled=true;
-    agentSay("Si hay heridos o peligro, cuelgue y llame al 911 ahora. Voy a pasar su llamada a una persona del taller.");return;
+    agentSay("If anyone is hurt or in danger, hang up and call 911 now. I'm transferring you to someone at the shop.");return;
   }
   var d=ag.d;
   if(ag.ask==="problem"){
     d.problem=text;
-    var m=text.match(/(i-?\s?\d+[^,.]*|hwy[^,.]*|cerca de [^,.]+|near [^,.]+|\ben [^,.]+)/i);
-    if(m)d.loc=m[0];
-    agentSay("Entendido, "+kind(text)+".",nextAsk);return;
+    var m=text.match(/(i-?\s?\d+[^,.]*|hwy[^,.]*|near [^,.]+|\bon [^,.]+|\bin [^,.]+|cerca de [^,.]+)/i);
+    if(m)d.hint=m[0];
+    agentSay("Got it, a "+kind(text)+".",nextAsk);return;
   }
+  if(ag.ask==="loc"&&/\blink\b|text me|share|gps|send me/i.test(text)){startShare();return}
   d[ag.ask]=text;nextAsk();
+}
+/* The driver taps a texted link and shares GPS. The demo uses a sample point near Pearsall, TX. */
+var SAMPLE={lat:28.8920,lng:-98.9748,acc:8};
+function mapsUrl(c){return "https://www.google.com/maps?q="+c.lat+","+c.lng}
+function startShare(){
+  ag.ask="wait";setChips();
+  agentSay("Sending you a text now. Tap the link and choose Share my location.",function(){
+    say("sms","Text to this number: Truck Masters wants your location. Tap to share: dispatch.example/l/"+digits(5)+" (simulated)");
+    var box=document.createElement("div");box.className="ord";
+    box.innerHTML="<b>On the driver's phone</b><div class='note' style='margin:0 0 8px'>Truck Masters is asking for your location so a technician can find you.</div>";
+    var go=document.createElement("button");go.type="button";go.className="btn";go.style.marginTop="0";go.textContent="Share my location";
+    go.onclick=function(){
+      go.disabled=true;go.textContent="Getting your location…";
+      setTimeout(function(){
+        ag.d.coords=SAMPLE;ag.d.loc=SAMPLE.lat.toFixed(4)+", "+SAMPLE.lng.toFixed(4);
+        go.hidden=true;
+        var r=document.createElement("div");
+        r.innerHTML="<span class='ok'>Location shared</span><div style='margin-top:4px'>"+ag.d.loc+" · accurate to about "+SAMPLE.acc+" m</div><a href='"+mapsUrl(SAMPLE)+"' target='_blank' rel='noopener'>Open in Maps</a><p class='note'>Demo: this is a sample point. The real link reads the phone's GPS.</p>";
+        box.appendChild(r);chat.scrollTop=chat.scrollHeight;
+        ag.ask="loc";
+        agentSay("Got your exact location. Thanks.",nextAsk);
+      },900);
+    };
+    box.appendChild(go);chat.appendChild(box);chat.scrollTop=chat.scrollHeight;
+  });
 }
 $("cf").addEventListener("submit",function(e){e.preventDefault();send($("msg").value)});
 function resetChat(){chat.innerHTML="";ag={ask:"problem",d:{}};$("msg").disabled=false;$("snd").disabled=false;
-  say("ag","Truck Masters, habla Dispatch, el asistente virtual. ¿Qué le pasó al camión y dónde está?");setChips()}
+  say("ag","Truck Masters, this is Dispatch, the virtual assistant. What happened to the truck, and where are you?");setChips()}
 $("rst").onclick=resetChat;
 
-/* ---------- taller (formulario manual) ---------- */
+/* ---------- shop (manual form) ---------- */
 $("send").onclick=function(){
   newOrder({cli:$("cli").value,drv:$("drv").value,ctc:$("ctc").value,trk:$("trk").value,svc:$("svc").value,hrs:+$("hrs").value||1,mil:+$("mil").value||0,prt:+$("prt").value||0,id:Math.floor(100000+Math.random()*900000)});
   show(2);
 };
 
-/* ---------- firma ---------- */
+/* ---------- signature ---------- */
 var cv=$("sig"),cx=cv.getContext("2d"),dr=false;
 function size(){var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;cv.width=Math.max(1,r.width*d);cv.height=Math.max(1,r.height*d);cx.setTransform(d,0,0,d,0,0);cx.lineWidth=2.5;cx.lineCap="round";cx.strokeStyle=getComputedStyle(document.body).color}
 function pos(e){var r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
@@ -210,37 +304,115 @@ cv.addEventListener("pointermove",function(e){if(!dr)return;var p=pos(e);cx.line
 cv.addEventListener("pointerup",function(){dr=false});
 function clr(){size();cx.clearRect(0,0,cv.width,cv.height);$("appr").disabled=true}
 $("clr").onclick=clr;
-$("appr").onclick=function(){st.signed=true;show(3)};
+$("appr").onclick=function(){st.signed=true;st.tx=10000000+Math.floor(Math.random()*89999999);show(3)};
 
-/* ---------- factura y pago ---------- */
+/* ---------- email ---------- */
+function buildMail(){
+  var b=total();
+  $("mtx").textContent="#"+st.tx;$("msub").textContent=money(b);
+  var rows=[["Code or check (Comdata, EFS, T-Chek)",b+cents(b*RATE.code)],["Fuel card / fleet card",b+cents(b*RATE.card)],["Credit / debit card",b+cents(b*RATE.card)]];
+  var h="";rows.forEach(function(r){h+='<div class="meth"><span>'+r[0]+"</span><span>"+money(r[1])+"</span></div>"});
+  $("mmeth").innerHTML=h;
+}
+$("viewinv").onclick=function(){show(4)};
+
+/* ---------- invoice and payment ---------- */
+var NETLAB={Comdata:"Comdata Express Code","EFS":"EFS check or money code","T-Chek":"T-Chek code"};
+function feeNow(){return cents(total()*RATE[st.method])}
 function buildInv(){
   var h="";lines().forEach(function(l){h+="<tr><td>"+esc(l[0])+"</td><td>"+money(l[1])+"</td></tr>"});
-  var fee=st.method==="card"?total()*0.035:0;
-  if(fee)h+="<tr><td>Recargo por tarjeta (3.5%)</td><td>"+money(fee)+"</td></tr>";
-  h+='<tr class="tot"><td>Total</td><td>'+money(total()+fee)+"</td></tr>";
-  $("inv").innerHTML=h;$("pay").textContent="Pagar "+money(total()+fee);
+  h+="<tr><td>Subtotal</td><td>"+money(total())+"</td></tr>";
+  h+="<tr><td>Convenience fee ("+(RATE[st.method]*100)+"%)</td><td>"+money(feeNow())+"</td></tr>";
+  h+='<tr class="tot"><td>Total</td><td>'+money(total()+feeNow())+"</td></tr>";
+  $("inv").innerHTML=h;$("pay").textContent="Pay "+money(total()+feeNow());
 }
 document.querySelectorAll("#pm button").forEach(function(b){b.onclick=function(){
   st.method=b.dataset.m;
   document.querySelectorAll("#pm button").forEach(function(x){x.classList.toggle("on",x===b)});
-  $("cardf").hidden=st.method!=="card";$("codef").hidden=st.method!=="code";$("achf").hidden=st.method!=="ach";
+  $("codef").hidden=st.method!=="code";$("cardf").hidden=st.method!=="card";
   $("perr").textContent="";buildInv();
 }});
+document.querySelectorAll("#nets button").forEach(function(b){b.onclick=function(){
+  st.net=b.dataset.n;
+  document.querySelectorAll("#nets button").forEach(function(x){x.classList.toggle("on",x===b)});
+  $("mclab").textContent=NETLAB[st.net];
+}});
+function digits(n){var s="";for(var i=0;i<n;i++)s+=Math.floor(Math.random()*10);return s}
+$("tgood").onclick=function(){var s=digits(10);if(/0000$/.test(s))s=s.slice(0,6)+"4821";$("mc").value=s};
+$("tbad").onclick=function(){$("mc").value="1234560000"};
 $("cn").oninput=function(){this.value=this.value.replace(/\D/g,"").slice(0,16).replace(/(.{4})/g,"$1 ").trim()};
 $("ce").oninput=function(){var v=this.value.replace(/\D/g,"").slice(0,4);this.value=v.length>2?v.slice(0,2)+"/"+v.slice(2):v};
+
+function runSteps(list,final){
+  var ul=$("vsteps");ul.innerHTML="";var i=0;
+  (function next(){
+    if(i>=list.length){final();return}
+    var li=document.createElement("li");li.textContent=list[i];ul.appendChild(li);i++;
+    setTimeout(next,700);
+  })();
+}
+function finishPay(label,code,auth){
+  var b=total(),fee=feeNow(),gross=b+fee;
+  $("rec").innerHTML="<tr><td>Order</td><td>"+st.o.id+"</td></tr><tr><td>Customer</td><td>"+esc(st.o.cli)+"</td></tr><tr><td>Method</td><td>"+esc(label)+"</td></tr>"+
+    (code?"<tr><td>Code</td><td>•••• "+esc(code.slice(-4))+"</td></tr>":"")+
+    "<tr><td>Authorization</td><td>"+esc(auth)+"</td></tr><tr><td>Signed</td><td>Yes</td></tr>"+
+    "<tr><td>To the shop</td><td>"+money(b)+"</td></tr><tr class='tot'><td>Paid</td><td>"+money(gross)+"</td></tr>";
+  $("recnote").textContent=code?"The code is authorized and goes into the daily close. The shop gets the money at 6:00 AM after the cutoff.":"Card payments settle separately. Only codes and checks go through the daily close.";
+  $("goclose").hidden=!code;
+  st.paid=true;$("payform").hidden=true;$("payok").hidden=false;window.scrollTo(0,0);
+}
 $("pay").onclick=function(){
   var e=$("perr");e.textContent="";
-  if(st.method==="card"&&($("cn").value.replace(/\s/g,"").length<16||$("ce").value.length<5||$("cc").value.length<3)){e.textContent="Revise los datos de la tarjeta. Para probar use 4242 4242 4242 4242, cualquier fecha futura y 123.";return}
-  if(st.method==="code"&&$("mc").value.length<6){e.textContent="Ingrese el money code.";return}
-  var b=$("pay");b.disabled=true;b.textContent="Procesando...";
-  setTimeout(function(){
-    b.disabled=false;st.paid=true;
-    var fee=st.method==="card"?total()*0.035:0,gross=total()+fee,names={card:"Tarjeta",ach:"ACH",code:"Money code"};
-    $("rec").innerHTML="<tr><td>Orden</td><td>"+st.o.id+"</td></tr><tr><td>Cliente</td><td>"+esc(st.o.cli)+"</td></tr><tr><td>Método</td><td>"+names[st.method]+"</td></tr><tr><td>Firmada</td><td>Sí</td></tr><tr class='tot'><td>Cobrado</td><td>"+money(gross)+"</td></tr>";
-    show(4);
-  },1200);
+  var b=$("pay");
+  if(st.method==="code"){
+    var code=$("mc").value.replace(/\D/g,"");
+    if(code.length<6){e.textContent="Enter the full code, or tap Test code.";return}
+    if(st.used[code]){e.textContent="This code was already used. Ask the carrier for a new one.";return}
+    b.disabled=true;
+    var bad=/0000$/.test(code),net=st.net;
+    var steps=["Sending the code to "+net+"…","Checking amount and merchant…"];
+    runSteps(steps,function(){
+      var ul=$("vsteps"),li=document.createElement("li");
+      if(bad){
+        li.className="bad";li.textContent=net+" declined the code: the amount or merchant doesn't match.";ul.appendChild(li);
+        e.textContent="The payment didn't go through. Check the code with the carrier.";b.disabled=false;return;
+      }
+      var auth="A"+digits(6);
+      li.className="good";li.textContent="Authorization received: "+auth;ul.appendChild(li);
+      st.used[code]=true;
+      st.ledger.push({t:nowT(),net:net,base:total(),tag:"Test",auth:auth});
+      setTimeout(function(){b.disabled=false;finishPay(net+" · code",code,auth)},700);
+    });
+  }else{
+    if($("cn").value.replace(/\s/g,"").length<16||$("ce").value.length<5||$("cc").value.length<3){e.textContent="Check the card details. To test, use 4242 4242 4242 4242, any future date and 123.";return}
+    b.disabled=true;b.textContent="Processing...";
+    setTimeout(function(){b.disabled=false;finishPay("Card",null,"T"+digits(6))},1200);
+  }
 };
-$("again").onclick=function(){st.o=null;st.signed=false;st.paid=false;resetChat();show(0)};
+$("goclose").onclick=function(){show(5)};
+$("again").onclick=function(){
+  st.o=null;st.signed=false;st.paid=false;
+  $("payform").hidden=false;$("payok").hidden=true;$("vsteps").innerHTML="";$("mc").value="";$("perr").textContent="";
+  resetChat();show(0);
+};
+
+/* ---------- daily close ---------- */
+function addBiz(d,n){var x=new Date(d);while(n>0){x.setDate(x.getDate()+1);var w=x.getDay();if(w!==0&&w!==6)n--}return x}
+var fdate=function(d){return d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})};
+function buildClose(){
+  var h="",sum=0;
+  st.ledger.forEach(function(r){sum+=r.base;h+="<tr><td>"+esc(r.t)+" · "+esc(r.net)+'<span class="tag">'+esc(r.tag)+"</span></td><td>"+money(r.base)+"</td></tr>"});
+  $("led").innerHTML=h;
+  var pct=Math.max(0,Math.min(10,+$("adv").value||0)),fee=cents(sum*pct/100),dep=cents(sum-fee);
+  var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+  var netPay=addBiz(new Date(),5);
+  $("sum").innerHTML="<tr><td>Codes authorized today</td><td>"+money(sum)+"</td></tr><tr><td>Advance fee ("+pct+"%)</td><td>−"+money(fee)+'</td></tr><tr class="tot"><td>Deposit at 6:00 AM</td><td>'+money(dep)+"</td></tr>";
+  $("floatn").textContent="Without an advance, the network would pay the shop around "+fdate(netPay)+" (about 5 business days, per EFS's merchant policy). With an advance, RoadPay puts up "+money(dep)+" today and recovers it from the network later. At this daily volume for 5 days, RoadPay would have about "+money(dep*5)+" advanced.";
+  $("closeday").hidden=st.closed;$("closed").hidden=!st.closed;
+  if(st.closed)$("closed").textContent="Deposit of "+money(dep)+" scheduled for 6:00 AM on "+fdate(tomorrow)+" (simulated).";
+}
+$("adv").oninput=function(){st.closed=false;buildClose()};
+$("closeday").onclick=function(){st.closed=true;buildClose()};
 
 resetChat();
 </script>
