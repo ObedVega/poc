@@ -222,7 +222,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
     </div>
     <div class="top-tools">
       <div class="seg" role="group" aria-label="Demo mode"><button type="button" id="mode-watch" aria-pressed="true">Watch</button><button type="button" id="mode-try" aria-pressed="false">Try it</button></div>
-      <a class="btn" href="demo.html" style="display:inline-flex;align-items:center;text-decoration:none;color:inherit">Back to site</a>
+      <a class="btn" href="rig.html" style="display:inline-flex;align-items:center;text-decoration:none;color:inherit">Back to site</a>
       <button type="button" class="btn" id="reset">Reset</button>
     </div>
   </header>
@@ -230,7 +230,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
   <div class="sticky">
     <div class="tabs" role="tablist" aria-label="Demo screens">
       <button type="button" class="tab" role="tab" id="tab-driver" aria-selected="true" aria-controls="panel-driver">demo-trucker<span class="dot" id="dot-driver" hidden></span></button>
-      <button type="button" class="tab" role="tab" id="tab-shop" aria-selected="false" aria-controls="panel-shop" tabdemo="-1">demo-shop<span class="dot" id="dot-shop" hidden></span></button>
+      <button type="button" class="tab" role="tab" id="tab-shop" aria-selected="false" aria-controls="panel-shop" tabindex="-1">demo-shop<span class="dot" id="dot-shop" hidden></span></button>
     </div>
     <div class="clockbox">
       <div class="clock" id="clock" aria-live="polite">10:45 PM</div>
@@ -427,6 +427,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
   var lang = 'en', mode = 'watch', idx = 0, busy = false, playing = false, run = 0, tab = 'driver';
   var tally = 0, replies = 0, alertsSent = 0, asks = 0;
   var pending = null;
+  var follow = true, auto = true;
   var S = {};
 
   /* sample data that depends on what the person picks */
@@ -545,7 +546,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
     ['driver', 'shop'].forEach(function(n){
       var on = n === name;
       $('tab-' + n).setAttribute('aria-selected', String(on));
-      $('tab-' + n).tabdemo = on ? 0 : -1;
+      $('tab-' + n).tabIndex = on ? 0 : -1;
       $('panel-' + n).hidden = !on;
     });
     $('dot-' + name).hidden = true;
@@ -572,13 +573,13 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
         nodes.forEach(function(n){
           n.classList.remove('await');
           n.onclick = null; n.onkeydown = null;
-          if (n.getAttribute('data-aw')){ n.removeAttribute('role'); n.removeAttribute('tabdemo'); n.removeAttribute('data-aw'); }
+          if (n.getAttribute('data-aw')){ n.removeAttribute('role'); n.removeAttribute('tabindex'); n.removeAttribute('data-aw'); }
         });
       }
       function done(n){ cleanup(); pending = null; res(n); }
       nodes.forEach(function(n){
         n.classList.add('await');
-        if (n.tagName !== 'BUTTON' && n.tagName !== 'INPUT'){ n.setAttribute('role', 'button'); n.tabdemo = 0; n.setAttribute('data-aw', '1'); }
+        if (n.tagName !== 'BUTTON' && n.tagName !== 'INPUT'){ n.setAttribute('role', 'button'); n.tabIndex = 0; n.setAttribute('data-aw', '1'); }
         n.onclick = function(){ done(n); };
         n.onkeydown = function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); done(n); } };
       });
@@ -618,7 +619,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
     if (mode === 'try'){
       selectTab('shop');
       $('upnext').textContent = 'Waiting on you, on the demo-shop tab: ' + hint;
-      i = btns.demoOf(await clickOne(btns));
+      i = btns.indexOf(await clickOne(btns));
     } else {
       await wait(1200, t);
       i = def;
@@ -637,7 +638,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
     var empty = $('sms-empty'); if (empty) empty.remove();
     var m = el('div', 'msg ' + who);
     m.lang = lang;
-    if (text.demoxOf('{url}') > -1){
+    if (text.indexOf('{url}') > -1){
       var parts = text.split('{url}');
       m.appendChild(document.createTextNode(parts[0]));
       var a = el('span', 'link', URL_TEXT);
@@ -777,13 +778,13 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
 
   /* the night */
   var EVENTS = [
-    { time: '10:45 PM', title: 'Shift starts', touches: ['shop'], run: async function(t){
+    { time: '10:45 PM', title: 'Shift starts', view: 'shop', view: 'shop', touches: ['shop'], run: async function(t){
       narr('idle');
       addLog('10:45 PM', 'Handoff', "Read the day crew's handoff. No open jobs carried over.");
       bump();
       await wait(800, t);
     }},
-    { time: '12:20 AM', title: 'A driver texts the gate number', touches: ['driver', 'shop'], run: async function(t){
+    { time: '12:20 AM', title: 'A driver texts the gate number', view: 'driver', touches: ['driver', 'shop'], run: async function(t){
       var Y = mode === 'try';
       if (Y) selectTab('driver');
       showScreen('sms');
@@ -808,7 +809,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
       else { await wait(1700, t); tapFlash($('sms-link')); }
       await wait(900, t);
     }},
-    { time: '12:21 AM', title: 'The driver fills in the form', touches: ['driver', 'shop'], run: async function(t){
+    { time: '12:21 AM', title: 'The driver fills in the form', view: 'driver', touches: ['driver', 'shop'], run: async function(t){
       var Y = mode === 'try';
       if (Y) selectTab('driver');
       showScreen('web'); showView('start');
@@ -847,6 +848,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
       }
 
       showView('status'); narr('sent');
+      if (mode === 'watch' && follow){ await wait(1100, t); selectTab('shop'); }
       track(1, 'active');
       track(2, ''); track(3, '');
       touch(['shop']);
@@ -865,13 +867,14 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
       bump();
       await wait(1000, t);
     }},
-    { time: '12:23 AM', title: 'The shop assigns a bay', touches: ['driver', 'shop'], run: async function(t){
+    { time: '12:23 AM', title: 'The shop assigns a bay', view: 'shop', touches: ['driver', 'shop'], run: async function(t){
       var P = PROB[S.prob];
       showScreen('web'); showView('status');
       narr('sent');
       var bi = await decide(t, 'Work order WO-1043 is ready. Which bay should the agent send the truck to?',
         [{ label: 'Bay 1', sub: 'Open' }, { label: 'Bay 2', sub: 'Open' }, { label: 'Bay 3', sub: 'Open' }], 1, 'pick a bay for the truck.');
       S.bay = bi + 1;
+      if (mode === 'watch' && follow) selectTab('driver');
       $('st-title').setAttribute('data-i', 'sent_t'); $('st-title').textContent = T('sent_t');
       $('st-sub').setAttribute('data-i', 'sent_sub'); $('st-sub').textContent = T('sent_sub');
       $('trk2').textContent = T('trk2');
@@ -886,7 +889,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
       bump();
       await wait(1000, t);
     }},
-    { time: '2:05 AM', title: "The part isn't on the shelf", touches: ['driver', 'shop'], run: async function(t){
+    { time: '2:05 AM', title: "The part isn't on the shelf", view: 'shop', touches: ['driver', 'shop'], run: async function(t){
       var P = PROB[S.prob];
       track(1, 'done'); track(2, 'done'); track(3, 'active');
       narr('wait');
@@ -913,7 +916,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
       bump();
       await wait(700, t);
     }},
-    { time: '3:30 AM', title: 'The driver asks a question', touches: ['driver', 'shop'], run: async function(t){
+    { time: '3:30 AM', title: 'The driver asks a question', view: 'driver', touches: ['driver', 'shop'], run: async function(t){
       var Y = mode === 'try', P = PROB[S.prob], E = eta();
       if (Y) selectTab('driver');
       showScreen('web'); showView('status');
@@ -925,7 +928,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
         var chips = [T('ask_q'), T('ask_q2')].map(function(s){ var c = el('span', 'chip', s); wrap.appendChild(c); return c; });
         wrap.hidden = false;
         $('page').scrollTop = $('page').scrollHeight;
-        q = chips.demoOf(await clickOne(chips));
+        q = chips.indexOf(await clickOne(chips));
         wrap.hidden = true;
       } else {
         box.style.color = 'var(--text)';
@@ -954,7 +957,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
     }},
     { time: function(){ return S.sup === 'B' ? '5:45 AM' : '4:50 AM'; },
       title: function(){ return S.sup === 'B' ? 'The part is in and the truck is done' : 'The owner needs to know'; },
-      touches: ['shop', 'driver'], run: async function(t){
+      view: 'shop', touches: ['shop', 'driver'], run: async function(t){
       var P = PROB[S.prob], E = eta();
       if (S.sup === 'B'){
         narr('done');
@@ -967,9 +970,10 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
         track(3, 'done');
         $('trk4').setAttribute('data-i', 'trk_done'); $('trk4').textContent = T('trk_done'); track(4, 'done');
         threadMsg('bot', T('ready'));
+        if (mode === 'watch' && follow) selectTab('driver');
         replies++;
         bump();
-        await wait(900, t);
+        await wait(mode === 'watch' ? 2200 : 900, t);
       } else {
         narr('quiet');
         var i = await decide(t, 'The job will run past the night shift. Should the agent wake the owner?',
@@ -985,7 +989,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
         await wait(900, t);
       }
     }},
-    { time: '6:00 AM', title: 'The day crew walks in', touches: ['shop'], run: async function(t){
+    { time: '6:00 AM', title: 'The day crew walks in', view: 'shop', touches: ['shop'], run: async function(t){
       narr('day');
       addLog('6:00 AM', 'Recap', 'Wrote the shift recap for the day crew.');
       bump();
@@ -1015,6 +1019,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
     $('clock').textContent = val(ev.time);
     $('now').textContent = val(ev.title);
     touch(ev.touches);
+    if (mode === 'watch' && follow && ev.view) selectTab(ev.view);
     refresh();
     try {
       await ev.run(t);
@@ -1042,6 +1047,10 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
       try { await wait(1500, t); } catch (e) { return; }
     }
     if (t === run){ playing = false; refresh(); }
+    if (t === run && auto && mode === 'watch' && idx >= EVENTS.length){
+      try { await wait(9000, t); } catch (e) { return; }
+      if (auto && t === run){ reset(); play(); }
+    }
   }
 
   function reset(){
@@ -1114,11 +1123,12 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
   var domNodes = document.querySelectorAll('.js-domain');
   for (var d = 0; d < domNodes.length; d++) domNodes[d].textContent = DOMAIN;
 
-  $('tab-driver').addEventListener('click', function(){ selectTab('driver'); });
-  $('tab-shop').addEventListener('click', function(){ selectTab('shop'); });
+  $('tab-driver').addEventListener('click', function(){ auto = false; follow = false; selectTab('driver'); });
+  $('tab-shop').addEventListener('click', function(){ auto = false; follow = false; selectTab('shop'); });
   [$('tab-driver'), $('tab-shop')].forEach(function(btn){
     btn.addEventListener('keydown', function(e){
       if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+        auto = false; follow = false;
         var next = tab === 'driver' ? 'shop' : 'driver';
         selectTab(next);
         $('tab-' + next).focus();
@@ -1127,12 +1137,15 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
   });
   $('in-plate').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-truck').click(); });
   $('in-code').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-prob').click(); });
-  $('next').addEventListener('click', function(){ step(); });
-  $('play').addEventListener('click', play);
-  $('reset').addEventListener('click', reset);
-  $('mode-try').addEventListener('click', function(){ setMode('try'); });
-  $('mode-watch').addEventListener('click', function(){ setMode('watch'); });
+  $('next').addEventListener('click', function(){ auto = false; follow = true; step(); });
+  $('play').addEventListener('click', function(){ auto = false; follow = true; play(); });
+  $('reset').addEventListener('click', function(){ auto = false; follow = true; reset(); });
+  $('mode-try').addEventListener('click', function(){ auto = false; setMode('try'); });
+  $('mode-watch').addEventListener('click', function(){ auto = false; follow = true; setMode('watch'); });
   reset();
+  if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){
+    setTimeout(function(){ if (auto && idx === 0 && !playing && !busy) play(); }, 1200);
+  }
 })();
 </script>
 </body>
