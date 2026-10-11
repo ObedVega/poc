@@ -63,6 +63,7 @@ button{font:inherit;color:inherit}
 .upnext{margin:10px 0 0;font-size:14px;color:var(--muted)}
 
 /* panels */
+[hidden]{display:none !important}
 .panel-wrap{margin-top:18px}
 .cap{font:700 14px/1 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
 
@@ -167,6 +168,23 @@ button{font:inherit;color:inherit}
 .recap .next{margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);font-size:15px}
 .foot{margin:28px 0 0;font-size:14px;color:var(--muted)}
 
+.await{cursor:pointer}
+.chip.await:not(.sel),.tile.await:not(.sel){border-color:var(--amber);box-shadow:0 0 0 2px rgba(245,179,1,.3)}
+.fake-btn.await,.photo.await{animation:pulse 1.4s ease-in-out infinite}
+.sms-input.await{color:var(--text);border-color:var(--amber);cursor:pointer;animation:pulse 1.4s ease-in-out infinite}
+.photo.await{border-color:var(--amber)}
+.link.await{outline:2px dashed var(--amber);outline-offset:3px}
+.fake-btn{cursor:default}.fake-btn.await{cursor:pointer}
+input.input{width:100%;color:var(--text);font-family:inherit}
+input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
+.decision{border-color:var(--amber-ink)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.opt{min-height:56px;text-align:left;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;display:flex;flex-direction:column;gap:2px;font-weight:600}
+.opt small{font-weight:400;color:var(--muted);font-size:14px}
+.opt:hover,.opt.await{border-color:var(--amber)}
+.opt.sel{background:var(--amber);color:var(--on-amber);border-color:var(--amber)}
+.opt.sel small{color:var(--on-amber)}
+.dec-q{margin:0 0 12px;font-size:16px}
 @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes dot{0%,80%,100%{opacity:.25}40%{opacity:1}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
@@ -196,18 +214,15 @@ button{font:inherit;color:inherit}
       <span class="brand-name"><span class="js-brand">Breaker</span><i></i></span>
     </div>
     <div class="top-tools">
-      <div class="seg" role="group" aria-label="Language the driver uses">
-        <button type="button" id="lang-en" aria-pressed="true">English</button>
-        <button type="button" id="lang-es" aria-pressed="false">Español</button>
-      </div>
+      <div class="seg" role="group" aria-label="Demo mode"><button type="button" id="mode-watch" aria-pressed="true">Watch</button><button type="button" id="mode-try" aria-pressed="false">Try it</button></div>
       <button type="button" class="btn" id="reset">Reset</button>
     </div>
   </header>
 
   <div class="sticky">
     <div class="tabs" role="tablist" aria-label="Demo screens">
-      <button type="button" class="tab" role="tab" id="tab-driver" aria-selected="true" aria-controls="panel-driver">Driver's phone<span class="dot" id="dot-driver" hidden></span></button>
-      <button type="button" class="tab" role="tab" id="tab-shop" aria-selected="false" aria-controls="panel-shop" tabindex="-1">Shop screen<span class="dot" id="dot-shop" hidden></span></button>
+      <button type="button" class="tab" role="tab" id="tab-driver" aria-selected="true" aria-controls="panel-driver">demo-trucker<span class="dot" id="dot-driver" hidden></span></button>
+      <button type="button" class="tab" role="tab" id="tab-shop" aria-selected="false" aria-controls="panel-shop" tabindex="-1">demo-shop<span class="dot" id="dot-shop" hidden></span></button>
     </div>
     <div class="clockbox">
       <div class="clock" id="clock" aria-live="polite">10:45 PM</div>
@@ -232,7 +247,7 @@ button{font:inherit;color:inherit}
           </div>
         </div>
         <div class="sms-body" id="sms" role="log" aria-live="polite" aria-label="Text messages"></div>
-        <div class="sms-input" aria-hidden="true">Text message</div>
+        <div class="sms-input" id="sms-in">Text message</div>
       </div>
 
       <div class="screen" id="scr-web" hidden lang="en">
@@ -246,7 +261,6 @@ button{font:inherit;color:inherit}
             <div class="pbrand"><svg width="30" height="30" aria-hidden="true"><use href="#bot"/></svg><span><b>Border Diesel &amp; Tire</b> · <span data-i="night">Night desk</span></span></div>
             <h2 class="ptitle" data-i="p_title">Truck down?</h2>
             <p class="psub" data-i="p_sub">Tell us what happened. We'll send a tech.</p>
-            <div class="chips"><span class="chip sel" id="lg-en">English</span><span class="chip" id="lg-es">Español</span></div>
             <div class="fake-btn" id="btn-start" data-i="p_start">Start</div>
           </div>
 
@@ -265,30 +279,33 @@ button{font:inherit;color:inherit}
               </svg>
             </div>
             <div class="okline"><i></i><span><span data-i="loc_ok">Location shared</span><small data-i="loc_sub">At the shop gate</small></span></div>
+            <div class="fake-btn" id="btn-loc" data-i="cont">Continue</div>
           </div>
 
           <div class="view" id="v-truck" hidden>
             <div class="pstep" data-n="2"></div>
             <h2 class="ptitle" data-i="truck_t">Your truck</h2>
             <div><div class="lbl" data-i="make">Make</div>
-              <div class="chips"><span class="chip" id="mk-kw">Kenworth</span><span class="chip">Peterbilt</span><span class="chip">Freightliner</span><span class="chip">Volvo</span><span class="chip" data-i="opt_other">Other</span></div></div>
-            <div><div class="lbl" data-i="plate">Plate, last 4</div><div class="input" id="in-plate"></div></div>
+              <div class="chips"><span class="chip" data-v="Kenworth">Kenworth</span><span class="chip" data-v="Peterbilt">Peterbilt</span><span class="chip" data-v="Freightliner">Freightliner</span><span class="chip" data-v="Volvo">Volvo</span><span class="chip" data-v="Other" data-i="opt_other">Other</span></div></div>
+            <div><div class="lbl" id="plate-l" data-i="plate">Plate, last 4</div><input class="input" id="in-plate" inputmode="numeric" maxlength="4" placeholder="4471" autocomplete="off" aria-labelledby="plate-l"></div>
+            <div class="fake-btn" id="btn-truck" data-i="cont">Continue</div>
           </div>
 
           <div class="view" id="v-problem" hidden>
             <div class="pstep" data-n="3"></div>
             <h2 class="ptitle" data-i="prob_t">What's wrong?</h2>
             <div class="tiles">
-              <div class="tile" data-i="opt_engine">Engine</div>
-              <div class="tile" data-i="opt_brakes">Brakes</div>
-              <div class="tile" data-i="opt_tires">Tires</div>
-              <div class="tile" data-i="opt_elec">Electrical</div>
-              <div class="tile" id="pr-reefer" data-i="opt_reefer">Reefer unit</div>
-              <div class="tile" data-i="opt_other">Other</div>
+              <div class="tile" data-v="engine" data-i="opt_engine">Engine</div>
+              <div class="tile" data-v="brakes" data-i="opt_brakes">Brakes</div>
+              <div class="tile" data-v="tires" data-i="opt_tires">Tires</div>
+              <div class="tile" data-v="elec" data-i="opt_elec">Electrical</div>
+              <div class="tile" data-v="reefer" data-i="opt_reefer">Reefer unit</div>
+              <div class="tile" data-v="other" data-i="opt_other">Other</div>
             </div>
-            <div><div class="lbl" data-i="code_l">Fault code</div><div class="input" id="in-code"></div></div>
+            <div><div class="lbl" id="code-l" data-i="code_l">Fault code</div><input class="input" id="in-code" maxlength="5" placeholder="e.g. 17" autocomplete="off" aria-labelledby="code-l"></div>
             <div><div class="lbl" data-i="when_l">How long ago?</div>
-              <div class="chips"><span class="chip" data-i="when_now">Just now</span><span class="chip" id="wh-20" data-i="when_20">About 20 min</span><span class="chip" data-i="when_more">Earlier</span></div></div>
+              <div class="chips"><span class="chip" data-v="now" data-i="when_now">Just now</span><span class="chip" data-v="20" data-i="when_20">About 20 min</span><span class="chip" data-v="more" data-i="when_more">Earlier</span></div></div>
+            <div class="fake-btn" id="btn-prob" data-i="cont">Continue</div>
           </div>
 
           <div class="view" id="v-photo" hidden>
@@ -314,6 +331,7 @@ button{font:inherit;color:inherit}
             </ul>
             <div><div class="lbl" data-i="msgs_h">Messages</div>
               <div class="thread" id="thread"></div></div>
+            <div class="chips" id="ask-opts" hidden></div>
             <div class="fake-input" id="ask-in" style="margin:0" aria-hidden="true"></div>
           </div>
 
@@ -330,6 +348,11 @@ button{font:inherit;color:inherit}
 
   <!-- SHOP TAB -->
   <section class="panel-wrap console" id="panel-shop" role="tabpanel" aria-labelledby="tab-shop" hidden>
+    <div class="panel decision" id="decision" role="group" aria-label="Your call" hidden>
+      <h2>Your call</h2>
+      <p class="dec-q" id="dec-q"></p>
+      <div class="opts" id="dec-opts"></div>
+    </div>
     <div class="panel">
       <div class="stat"><div class="tally" id="tally">0</div><div class="stat-label">manual tasks handled</div></div>
     </div>
@@ -381,7 +404,7 @@ button{font:inherit;color:inherit}
     </div>
   </section>
 
-  <p class="foot">Scripted demo. The driver, the shop, the supplier replies and the fault code are sample data. The link on the phone is a mock-up, not a live page.</p>
+  <p class="foot">Scripted demo. In Try it mode your choices change what the shop sees. The driver, the shop, the supplier replies, the prices and the fault code are sample data. The link on the phone is a mock-up, not a live page.</p>
 </div>
 
 <script>
@@ -390,43 +413,76 @@ button{font:inherit;color:inherit}
   var BRAND = 'Breaker', DOMAIN = 'usebreaker.com';
   var URL_TEXT = DOMAIN + '/truckdown';
   var $ = function(id){ return document.getElementById(id); };
+  var qa = function(sel){ return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+  var qs = function(sel){ return document.querySelector(sel); };
   var CANCEL = {};
-  var lang = 'en', idx = 0, busy = false, playing = false, run = 0, tab = 'driver';
+  var lang = 'en', mode = 'watch', idx = 0, busy = false, playing = false, run = 0, tab = 'driver';
   var tally = 0, replies = 0, alertsSent = 0, asks = 0;
+  var pending = null;
+  var S = {};
+
+  /* sample data that depends on what the person picks */
+  var PROB = {
+    engine:  { issue: 'Engine derate',      name: 'Fuel pressure sensor',   pEn: 'a fuel pressure sensor',       pEs: 'un sensor de presión de combustible' },
+    brakes:  { issue: 'Brake problem',      name: 'Brake chamber',          pEn: 'a brake chamber',              pEs: 'una cámara de freno' },
+    tires:   { issue: 'Tire failure',       name: 'Steer tire 295/75R22.5', pEn: 'a steer tire, 295/75R22.5',    pEs: 'una llanta direccional 295/75R22.5' },
+    elec:    { issue: 'Electrical fault',   name: 'Alternator',             pEn: 'an alternator',                pEs: 'un alternador' },
+    reefer:  { issue: 'Reefer unit quit',   name: 'Reefer fan motor',       pEn: 'a reefer fan motor',           pEs: 'un motor de ventilador del reefer' },
+    other:   { issue: 'Needs inspection',   name: 'Part to be confirmed',   pEn: 'a part the tech still has to confirm', pEs: 'una refacción que el técnico todavía tiene que confirmar' }
+  };
+  var WHEN = {
+    now:  { short: 'Just now',         long: 'it happened just now' },
+    '20': { short: 'About 20 min ago', long: 'it happened about 20 minutes ago' },
+    more: { short: 'Earlier tonight',  long: 'it happened earlier tonight' }
+  };
+  var ETA = {
+    A: { due: '6:45 AM', eta: '8:00 AM', price: '$212' },
+    B: { due: '4:30 AM', eta: '5:45 AM', price: '$268' }
+  };
+  function defaults(){
+    S = { make: 'Kenworth', plate: '4471', prob: 'reefer', code: '17', when: '20', photo: true, bay: 2, sup: null, held: false };
+  }
+  defaults();
+  function unit(){ return S.make === 'Other' ? 'Truck' : S.make; }
+  function eta(){ return ETA[S.sup || 'A']; }
 
   var L = {
     en: {
-      sms_d: "DOWN",
+      sms_d: "DOWN", sms_tap: "Tap to text “DOWN”",
       sms_r: "Border Diesel & Tire night desk. Tell us what's wrong here: {url}",
-      night: "Night desk",
+      night: "Night desk", cont: "Continue",
       p_title: "Truck down?", p_sub: "Tell us what happened. We'll send a tech.", p_start: "Start",
       loc_t: "Where are you?", loc_ok: "Location shared", loc_sub: "At the shop gate",
       truck_t: "Your truck", make: "Make", plate: "Plate, last 4",
       prob_t: "What's wrong?", opt_engine: "Engine", opt_brakes: "Brakes", opt_tires: "Tires", opt_elec: "Electrical", opt_reefer: "Reefer unit", opt_other: "Other",
-      code_l: "Fault code", when_l: "How long ago?", when_now: "Just now", when_20: "About 20 min", when_more: "Earlier",
+      code_l: "Fault code (if any)", when_l: "How long ago?", when_now: "Just now", when_20: "About 20 min", when_more: "Earlier",
       photo_t: "Add a photo", photo_tap: "Tap to add a photo or video", photo_ok: "1 photo added", send: "Send to the shop",
       sent_t0: "Sent. The shop has your details.", sent_sub0: "We'll update this page as things move.",
-      sent_t: "Go to bay 2.", sent_sub: "Your tech has been notified.",
-      trk1: "Received", trk2: "In bay 2", trk3: "Waiting on a part", trk4: "Estimated done: about 8:00 AM",
-      msgs_h: "Messages", ask_q: "How much longer?",
-      ask_r: "We're waiting on a fan motor, due around 6:45. Plan on about 8:00 AM. We'll tell you here if that changes.",
+      sent_t: "Go to bay {n}.", sent_sub: "Your tech has been notified.",
+      trk1: "Received", trk2: "In bay {n}", trk3: "Waiting on a part", trk4: "Estimated done: about {eta}", trk_done: "Done",
+      msgs_h: "Messages", ask_q: "How much longer?", ask_q2: "Is the part here yet?",
+      ask_r1: "We're waiting on {part}, due around {due}. Plan on about {eta}. We'll tell you here if that changes.",
+      ask_r2: "Not yet. It's due around {due}. Your tech has everything else ready.",
+      ready: "Your truck is ready. Pull out of bay {n}.",
       ask_ph: "Ask a question", step_fmt: "Step {n} of 4"
     },
     es: {
-      sms_d: "AYUDA",
+      sms_d: "AYUDA", sms_tap: "Toque para enviar “AYUDA”",
       sms_r: "Border Diesel & Tire, turno de noche. Cuéntenos qué le pasó aquí: {url}",
-      night: "Turno de noche",
+      night: "Turno de noche", cont: "Continuar",
       p_title: "¿Camión descompuesto?", p_sub: "Cuéntenos qué pasó. Le mandamos un técnico.", p_start: "Empezar",
       loc_t: "¿Dónde está?", loc_ok: "Ubicación compartida", loc_sub: "En el portón del taller",
       truck_t: "Su camión", make: "Marca", plate: "Placa, últimos 4",
       prob_t: "¿Qué le pasa?", opt_engine: "Motor", opt_brakes: "Frenos", opt_tires: "Llantas", opt_elec: "Eléctrico", opt_reefer: "Reefer", opt_other: "Otro",
-      code_l: "Código de falla", when_l: "¿Hace cuánto?", when_now: "Ahora mismo", when_20: "Hace 20 min", when_more: "Antes",
+      code_l: "Código de falla (si hay)", when_l: "¿Hace cuánto?", when_now: "Ahora mismo", when_20: "Hace 20 min", when_more: "Antes",
       photo_t: "Agregue una foto", photo_tap: "Toque para agregar foto o video", photo_ok: "1 foto agregada", send: "Enviar al taller",
       sent_t0: "Enviado. El taller ya tiene sus datos.", sent_sub0: "Aquí le avisamos cuando haya cambios.",
-      sent_t: "Pase a la bahía 2.", sent_sub: "Ya avisamos a su técnico.",
-      trk1: "Recibido", trk2: "En la bahía 2", trk3: "Esperando una refacción", trk4: "Listo aprox.: 8:00 AM",
-      msgs_h: "Mensajes", ask_q: "¿Cuánto falta?",
-      ask_r: "Estamos esperando un motor de ventilador, llega como a las 6:45. Calcule como las 8:00. Aquí le avisamos si cambia.",
+      sent_t: "Pase a la bahía {n}.", sent_sub: "Ya avisamos a su técnico.",
+      trk1: "Recibido", trk2: "En la bahía {n}", trk3: "Esperando una refacción", trk4: "Listo aprox.: {eta}", trk_done: "Listo",
+      msgs_h: "Mensajes", ask_q: "¿Cuánto falta?", ask_q2: "¿Ya llegó la refacción?",
+      ask_r1: "Estamos esperando {part}, llega como a las {due}. Calcule como las {eta}. Aquí le avisamos si cambia.",
+      ask_r2: "Todavía no. Llega como a las {due}. Su técnico ya tiene todo lo demás listo.",
+      ready: "Su camión está listo. Salga de la bahía {n}.",
       ask_ph: "Haga una pregunta", step_fmt: "Paso {n} de 4"
     }
   };
@@ -441,10 +497,11 @@ button{font:inherit;color:inherit}
     problem: ["Tap the problem", "Big buttons, and a field for the fault code if the dash shows one."],
     photo: ["A photo says it faster", "It goes straight onto the work order for the tech."],
     sent: ["Sent. The shop has it", "The page stays open as a live status, so he doesn't have to text 'how long?'."],
-    bay: ["He knows where to go", "Bay 2, tech notified, all on the same page."],
+    bay: ["He knows where to go", "The bay, the tech and the status are all on the same page."],
     wait: ["The page updates itself", "The part is on order. The driver sees the status change without asking."],
     ask: ["Questions get answered", "If he still wants to ask, he types it here and the answer comes from the work order."],
     quiet: ["Nothing for the driver to do", "The owner gets one heads-up. The driver is already informed."],
+    done: ["The truck is done early", "The part came in sooner, so the repair finished before the shift ended. The driver already knows."],
     day: ["Day crew takes over", "The driver's page keeps showing the same status."]
   };
 
@@ -456,22 +513,22 @@ button{font:inherit;color:inherit}
     if (text != null) e.textContent = text;
     return e;
   }
-  function T(key){ return L[lang][key]; }
+  function fmt(s){ return s.replace('{n}', S.bay).replace('{eta}', eta().eta); }
+  function T(key){ return fmt(L[lang][key]); }
+  function val(x){ return typeof x === 'function' ? x() : x; }
 
   /* language */
   function applyLang(){
     var nodes = document.querySelectorAll('[data-i]');
     for (var i = 0; i < nodes.length; i++){
       var k = nodes[i].getAttribute('data-i');
-      if (L[lang][k] != null) nodes[i].textContent = L[lang][k];
+      if (L[lang][k] != null) nodes[i].textContent = T(k);
     }
     var steps = document.querySelectorAll('.pstep');
     for (var j = 0; j < steps.length; j++){
-      steps[j].textContent = T('step_fmt').replace('{n}', steps[j].getAttribute('data-n'));
+      steps[j].textContent = L[lang].step_fmt.replace('{n}', steps[j].getAttribute('data-n'));
     }
     $('scr-web').lang = lang;
-    $('lg-en').className = 'chip' + (lang === 'en' ? ' sel' : '');
-    $('lg-es').className = 'chip' + (lang === 'es' ? ' sel' : '');
   }
 
   /* tabs */
@@ -489,10 +546,82 @@ button{font:inherit;color:inherit}
     list.forEach(function(n){ if (n !== tab) $('dot-' + n).hidden = false; });
   }
 
-  /* narration */
-  function narr(key){
-    $('narr-t').textContent = NARR[key][0];
-    $('narr-p').textContent = NARR[key][1];
+  /* narration. In Try it mode the card tells the person what to tap. */
+  function narr(key, hint){
+    if (mode === 'try' && hint){
+      $('narr-t').textContent = 'Your turn';
+      $('narr-p').textContent = hint;
+    } else {
+      $('narr-t').textContent = NARR[key][0];
+      $('narr-p').textContent = NARR[key][1];
+    }
+  }
+
+  /* waiting for the person to tap something */
+  function clickOne(nodes){
+    return new Promise(function(res, rej){
+      function cleanup(){
+        nodes.forEach(function(n){
+          n.classList.remove('await');
+          n.onclick = null; n.onkeydown = null;
+          if (n.getAttribute('data-aw')){ n.removeAttribute('role'); n.removeAttribute('tabindex'); n.removeAttribute('data-aw'); }
+        });
+      }
+      function done(n){ cleanup(); pending = null; res(n); }
+      nodes.forEach(function(n){
+        n.classList.add('await');
+        if (n.tagName !== 'BUTTON' && n.tagName !== 'INPUT'){ n.setAttribute('role', 'button'); n.tabIndex = 0; n.setAttribute('data-aw', '1'); }
+        n.onclick = function(){ done(n); };
+        n.onkeydown = function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); done(n); } };
+      });
+      pending = { cancel: function(){ cleanup(); rej(CANCEL); } };
+    });
+  }
+  async function choose(nodes, def, t){
+    var n;
+    if (mode === 'try') n = await clickOne(nodes);
+    else { await wait(650, t); n = def; }
+    if (t !== run) throw CANCEL;
+    nodes.forEach(function(x){ x.classList.remove('sel'); });
+    n.classList.add('sel');
+    await wait(mode === 'try' ? 200 : 450, t);
+    return n;
+  }
+  async function press(btn, t, lead){
+    if (mode === 'try') await clickOne([btn]);
+    else { await wait(lead || 700, t); tapFlash(btn); await wait(600, t); }
+    if (t !== run) throw CANCEL;
+    if (mode === 'try') tapFlash(btn);
+    await wait(250, t);
+  }
+  async function decide(t, q, opts, def, hint){
+    var box = $('decision'), wrap = $('dec-opts');
+    $('dec-q').textContent = q;
+    wrap.textContent = '';
+    var btns = opts.map(function(o){
+      var b = el('button', 'opt'); b.type = 'button';
+      b.appendChild(el('span', null, o.label));
+      if (o.sub) b.appendChild(el('small', null, o.sub));
+      wrap.appendChild(b);
+      return b;
+    });
+    box.hidden = false;
+    var i;
+    if (mode === 'try'){
+      selectTab('shop');
+      $('upnext').textContent = 'Waiting on you, on the demo-shop tab: ' + hint;
+      i = btns.indexOf(await clickOne(btns));
+    } else {
+      await wait(1200, t);
+      i = def;
+    }
+    if (t !== run) throw CANCEL;
+    btns.forEach(function(b){ b.classList.remove('sel'); });
+    btns[i].classList.add('sel');
+    await wait(mode === 'try' ? 450 : 1000, t);
+    box.hidden = true;
+    refresh();
+    return i;
   }
 
   /* driver: text thread */
@@ -533,13 +662,13 @@ button{font:inherit;color:inherit}
     $('page').scrollTop = 0;
   }
   async function typeInto(node, text, t){
-    node.textContent = '';
+    var inp = node.tagName === 'INPUT';
+    if (inp) node.value = ''; else node.textContent = '';
     for (var i = 0; i < text.length; i++){
-      node.textContent += text.charAt(i);
+      if (inp) node.value += text.charAt(i); else node.textContent += text.charAt(i);
       await wait(130, t);
     }
   }
-  function sel(node){ node.classList.add('sel'); }
   function tapFlash(node){
     node.classList.remove('tap');
     void node.offsetWidth;
@@ -554,12 +683,17 @@ button{font:inherit;color:inherit}
     var m = el('div', 'msg ' + who, text);
     m.lang = lang;
     $('thread').appendChild(m);
+    $('page').scrollTop = $('page').scrollHeight;
+  }
+  function addPhoto(){
+    $('photo').setAttribute('data-state', 'added');
+    $('photo-empty').hidden = true; $('photo-img').hidden = false; $('photo-ok').hidden = false;
   }
 
   /* shop */
-  function setWO(key, val){
+  function setWO(key, v){
     var e = $('wo-' + key);
-    e.textContent = val;
+    e.textContent = v;
     e.classList.remove('is-empty');
     e.classList.remove('flash');
     void e.offsetWidth;
@@ -608,12 +742,14 @@ button{font:inherit;color:inherit}
     var body = $('recap-body');
     body.hidden = false;
     body.textContent = '';
+    var P = PROB[S.prob], E = eta(), early = S.sup === 'B';
     var dl = el('dl');
     [
       ['Units in', '1'],
-      ['Open jobs', '1: Kenworth, plate ends in 4471'],
-      ['Waiting on', 'Reefer fan motor, due about 6:45 AM'],
-      ['Estimated done', 'About 8:00 AM'],
+      ['Open jobs', early ? '0. WO-1043 closed overnight' : '1: ' + unit() + ', plate ends in ' + S.plate],
+      ['Waiting on', early ? 'Nothing' : P.name + ', due about ' + E.due],
+      [early ? 'Finished' : 'Estimated done', early ? 'About ' + E.eta : 'About ' + E.eta],
+      ['Parts ordered', P.name + ' from Supplier ' + S.sup + ', ' + E.price],
       ['Messages to the driver', String(replies)],
       ['Alerts to staff', String(alertsSent)],
       ['Supplier requests', String(asks)]
@@ -624,7 +760,11 @@ button{font:inherit;color:inherit}
       dl.appendChild(d);
     });
     body.appendChild(dl);
-    body.appendChild(el('p', 'next', 'For the day crew: install the fan motor when it arrives, then confirm with the driver. No decisions are waiting on you.'));
+    var note = early
+      ? 'Nothing to do. The job closed overnight and the driver was told his truck was ready. No decisions are waiting on you.'
+      : 'For the day crew: install the ' + P.name.toLowerCase() + ' when it arrives, then confirm with the driver. '
+        + (S.held ? 'The owner was not woken up. Let him know the job runs late.' : 'No decisions are waiting on you.');
+    body.appendChild(el('p', 'next', note));
   }
 
   /* the night */
@@ -636,9 +776,16 @@ button{font:inherit;color:inherit}
       await wait(800, t);
     }},
     { time: '12:20 AM', title: 'A driver texts the gate number', touches: ['driver', 'shop'], run: async function(t){
+      var Y = mode === 'try';
+      if (Y) selectTab('driver');
       showScreen('sms');
-      narr('sms');
+      narr('sms', 'You are the driver. Tap the message box to text one word to the shop.');
       await wait(900, t);
+      if (Y){
+        $('sms-in').textContent = T('sms_tap');
+        await clickOne([$('sms-in')]);
+        $('sms-in').textContent = 'Text message';
+      }
       smsBubble('driver', T('sms_d'));
       await wait(700, t);
       addLog('12:20 AM', 'Intake', 'A driver texted ' + T('sms_d') + ' at the gate. Sent him the truckdown link.');
@@ -648,98 +795,138 @@ button{font:inherit;color:inherit}
       ty.remove();
       smsBubble('bot', T('sms_r'));
       replies++;
-      narr('link');
-      await wait(1700, t);
-      tapFlash($('sms-link'));
+      narr('link', 'The shop answered with a link. Tap it.');
+      if (Y) await clickOne([$('sms-link')]);
+      else { await wait(1700, t); tapFlash($('sms-link')); }
       await wait(900, t);
     }},
     { time: '12:21 AM', title: 'The driver fills in the form', touches: ['driver', 'shop'], run: async function(t){
-      showScreen('web'); showView('start'); narr('open');
-      await wait(1700, t);
-      tapFlash($('btn-start'));
-      await wait(700, t);
-      showView('loc'); narr('loc');
-      await wait(1800, t);
-      showView('truck'); narr('truck');
-      await wait(600, t);
-      sel($('mk-kw'));
-      await wait(500, t);
-      await typeInto($('in-plate'), '4471', t);
-      await wait(700, t);
-      showView('problem'); narr('problem');
-      await wait(700, t);
-      sel($('pr-reefer'));
-      await wait(600, t);
-      await typeInto($('in-code'), '17', t);
-      await wait(400, t);
-      sel($('wh-20'));
-      await wait(900, t);
-      showView('photo'); narr('photo');
-      await wait(900, t);
-      $('photo').setAttribute('data-state', 'added');
-      $('photo-empty').hidden = true; $('photo-img').hidden = false; $('photo-ok').hidden = false;
-      await wait(1100, t);
-      tapFlash($('btn-send'));
-      await wait(800, t);
+      var Y = mode === 'try';
+      if (Y) selectTab('driver');
+      showScreen('web'); showView('start');
+      narr('open', 'The page opens in the phone. Tap Start.');
+      await press($('btn-start'), t, 1700);
+
+      showView('loc'); narr('loc', 'It asks where the truck is. Tap Continue to share your location.');
+      await press($('btn-loc'), t, 1500);
+
+      showView('truck'); narr('truck', 'Pick your truck make, then type the last 4 of the plate. Any 4 digits work, or leave it blank.');
+      var mk = await choose(qa('#v-truck .chip'), qs('#v-truck .chip[data-v="Kenworth"]'), t);
+      S.make = mk.getAttribute('data-v');
+      if (Y) $('in-plate').focus(); else await typeInto($('in-plate'), '4471', t);
+      await press($('btn-truck'), t);
+      S.plate = ($('in-plate').value.replace(/\D/g, '') || '4471').slice(0, 4);
+      $('in-plate').value = S.plate;
+
+      showView('problem'); narr('problem', 'Tap what is wrong, then how long ago it happened.');
+      var pr = await choose(qa('#v-problem .tile'), qs('#v-problem .tile[data-v="reefer"]'), t);
+      S.prob = pr.getAttribute('data-v');
+      var wh = await choose(qa('#v-problem .chip'), qs('#v-problem .chip[data-v="20"]'), t);
+      S.when = wh.getAttribute('data-v');
+      if (Y){ narr('problem', 'Type a fault code if the dash shows one (optional), then tap Continue.'); $('in-code').focus(); }
+      else await typeInto($('in-code'), '17', t);
+      await press($('btn-prob'), t);
+      S.code = $('in-code').value.trim().slice(0, 5);
+
+      showView('photo'); narr('photo', 'Tap the photo box to add a picture, then send. You can also send without one.');
+      if (Y){
+        var n = await clickOne([$('photo'), $('btn-send')]);
+        if (n === $('photo')){ S.photo = true; addPhoto(); await press($('btn-send'), t); }
+        else { S.photo = false; tapFlash($('btn-send')); await wait(250, t); }
+      } else {
+        await wait(900, t); S.photo = true; addPhoto();
+        await press($('btn-send'), t, 1100);
+      }
+
       showView('status'); narr('sent');
       track(1, 'active');
       track(2, ''); track(3, '');
       touch(['shop']);
+      var P = PROB[S.prob];
       $('wo-id').textContent = 'WO-1043';
       setWO('opened', '12:21 AM');
-      setWO('unit', 'Kenworth');
-      setWO('plate', 'Ends in 4471');
-      setWO('issue', 'Reefer unit quit');
-      setWO('code', '17');
-      setWO('started', 'About 20 min ago');
+      setWO('unit', unit());
+      setWO('plate', 'Ends in ' + S.plate);
+      setWO('issue', P.issue);
+      setWO('code', S.code || 'None');
+      setWO('started', WHEN[S.when].short);
       setWO('location', 'At the shop gate');
-      setWO('photos', '1 photo');
+      setWO('photos', S.photo ? '1 photo' : 'None');
       setStatus('Intake', 'active');
-      addLog('12:21 AM', 'Order', 'The driver filled in the form: truck, problem, code, location and a photo. Opened work order WO-1043.');
+      addLog('12:21 AM', 'Order', 'The driver filled in the form: truck, problem' + (S.code ? ', code' : '') + ', location' + (S.photo ? ' and a photo' : '') + '. Opened work order WO-1043.');
       bump();
       await wait(1000, t);
     }},
     { time: '12:23 AM', title: 'The shop assigns a bay', touches: ['driver', 'shop'], run: async function(t){
+      var P = PROB[S.prob];
       showScreen('web'); showView('status');
+      narr('sent');
+      var bi = await decide(t, 'Work order WO-1043 is ready. Which bay should the agent send the truck to?',
+        [{ label: 'Bay 1', sub: 'Open' }, { label: 'Bay 2', sub: 'Open' }, { label: 'Bay 3', sub: 'Open' }], 1, 'pick a bay for the truck.');
+      S.bay = bi + 1;
       $('st-title').setAttribute('data-i', 'sent_t'); $('st-title').textContent = T('sent_t');
       $('st-sub').setAttribute('data-i', 'sent_sub'); $('st-sub').textContent = T('sent_sub');
+      $('trk2').textContent = T('trk2');
       track(1, 'done'); track(2, 'active'); track(3, '');
       narr('bay');
-      setWO('bay', 'Bay 2');
+      setWO('bay', 'Bay ' + S.bay);
       setWO('tech', 'Night tech');
-      setStatus('In bay 2', 'active');
+      setStatus('In bay ' + S.bay, 'active');
       await wait(600, t);
-      addAlert('Night tech', '12:23 AM', 'Bay 2: Kenworth, plate ends in 4471. Reefer unit, fault code 17, quit about 20 minutes ago. Photo attached. Driver is pulling in now.');
-      addLog('12:23 AM', 'Alert', 'Assigned bay 2 and pinged the night tech. The driver sees where to go on his page.');
+      addAlert('Night tech', '12:23 AM', 'Bay ' + S.bay + ': ' + unit() + ', plate ends in ' + S.plate + '. ' + P.issue + ', ' + (S.code ? 'fault code ' + S.code : 'no fault code') + ', ' + WHEN[S.when].long + '. ' + (S.photo ? 'Photo attached. ' : 'No photo. ') + 'Driver is pulling in now.');
+      addLog('12:23 AM', 'Alert', 'Assigned bay ' + S.bay + ' and pinged the night tech. The driver sees where to go on his page.');
       bump();
       await wait(1000, t);
     }},
     { time: '2:05 AM', title: "The part isn't on the shelf", touches: ['driver', 'shop'], run: async function(t){
+      var P = PROB[S.prob];
       track(1, 'done'); track(2, 'done'); track(3, 'active');
       narr('wait');
-      addLog('2:05 AM', 'Parts', 'The tech needs a reefer fan motor and the shop has none. Asking two suppliers.');
-      setWO('part', 'Reefer fan motor');
+      addLog('2:05 AM', 'Parts', 'The tech needs ' + P.pEn + ' and the shop has none. Asking two suppliers.');
+      setWO('part', P.name);
       setStatus('Waiting on part', 'wait');
       var a = addPart('Supplier A');
       var b = addPart('Supplier B');
       await wait(1300, t);
-      setPart(a, 'In stock. Can deliver by 6:45 AM.', 'ok');
+      setPart(a, 'In stock. ' + ETA.A.price + ', delivers by ' + ETA.A.due + '.', 'ok');
       await wait(900, t);
-      setPart(b, 'Out of stock.', 'no');
-      addLog('2:09 AM', 'Parts', 'Supplier A can deliver by 6:45 AM. Supplier B is out. The tech confirms the order.');
+      setPart(b, 'In stock. ' + ETA.B.price + ' rush, delivers by ' + ETA.B.due + '.', 'ok');
+      addLog('2:09 AM', 'Parts', 'Both suppliers have it. A is cheaper and later, B is faster and costs more.');
+      var i = await decide(t, 'Both suppliers have the part. Which one should the agent order from?',
+        [{ label: 'Supplier A', sub: ETA.A.price + ' · arrives ' + ETA.A.due + ' · truck done about ' + ETA.A.eta },
+         { label: 'Supplier B', sub: ETA.B.price + ' rush · arrives ' + ETA.B.due + ' · truck done about ' + ETA.B.eta }], 0, 'pick a supplier.');
+      S.sup = i === 0 ? 'A' : 'B';
+      var E = eta();
+      setPart(i === 0 ? a : b, 'Ordered. Arrives ' + E.due + '.', 'ok');
+      setPart(i === 0 ? b : a, 'Not needed.', '');
+      setWO('eta', 'About ' + E.eta);
+      setStatus('Est. ' + E.eta, 'wait');
+      addLog('2:10 AM', 'Parts', 'Ordered from Supplier ' + S.sup + '. The tech confirms. Estimated done about ' + E.eta + '.');
       bump();
       await wait(700, t);
     }},
-    { time: '3:30 AM', title: 'The driver asks "how much longer?"', touches: ['driver', 'shop'], run: async function(t){
+    { time: '3:30 AM', title: 'The driver asks a question', touches: ['driver', 'shop'], run: async function(t){
+      var Y = mode === 'try', P = PROB[S.prob], E = eta();
+      if (Y) selectTab('driver');
       showScreen('web'); showView('status');
-      narr('ask');
+      narr('ask', 'You are still the driver. Ask the page a question.');
       var box = $('ask-in');
-      box.style.color = 'var(--text)';
-      await typeInto(box, T('ask_q'), t);
-      await wait(500, t);
-      threadMsg('driver', T('ask_q'));
-      box.textContent = T('ask_ph'); box.style.color = '';
-      $('page').scrollTop = $('page').scrollHeight;
+      var q = 0, qtext;
+      if (Y){
+        var wrap = $('ask-opts'); wrap.textContent = '';
+        var chips = [T('ask_q'), T('ask_q2')].map(function(s){ var c = el('span', 'chip', s); wrap.appendChild(c); return c; });
+        wrap.hidden = false;
+        $('page').scrollTop = $('page').scrollHeight;
+        q = chips.indexOf(await clickOne(chips));
+        wrap.hidden = true;
+      } else {
+        box.style.color = 'var(--text)';
+        await typeInto(box, T('ask_q'), t);
+        await wait(500, t);
+        box.textContent = T('ask_ph'); box.style.color = '';
+      }
+      qtext = q === 0 ? T('ask_q') : T('ask_q2');
+      threadMsg('driver', qtext);
       await wait(500, t);
       var ty = el('div', 'msg typing'); ty.setAttribute('aria-hidden', 'true');
       ty.appendChild(el('span')); ty.appendChild(el('span')); ty.appendChild(el('span'));
@@ -747,22 +934,48 @@ button{font:inherit;color:inherit}
       $('page').scrollTop = $('page').scrollHeight;
       await wait(1200, t);
       ty.remove();
-      threadMsg('bot', T('ask_r'));
+      var reply = T(q === 0 ? 'ask_r1' : 'ask_r2').replace('{part}', lang === 'es' ? P.pEs : P.pEn).replace('{due}', E.due);
+      threadMsg('bot', reply);
       replies++;
+      $('trk4').textContent = T('trk4');
       track(4, '');
       $('page').scrollTop = $('page').scrollHeight;
-      setWO('eta', 'About 8:00 AM');
-      setStatus('Est. 8:00 AM', 'wait');
-      addLog('3:30 AM', 'Reply', 'The driver asked how much longer on his page. Answered from the work order. The tech stayed under the truck.');
+      addLog('3:30 AM', 'Reply', 'The driver asked "' + L.en[q === 0 ? 'ask_q' : 'ask_q2'] + '" on his page. Answered from the work order. The tech stayed under the truck.');
       bump();
       await wait(900, t);
     }},
-    { time: '4:50 AM', title: 'The owner needs to know', touches: ['shop'], run: async function(t){
-      narr('quiet');
-      addAlert('Owner', '4:50 AM', "Heads-up: the Kenworth (4471) won't be done before about 8:00 AM. Waiting on a reefer fan motor due around 6:45. The driver is informed. Nothing needed from you.");
-      addLog('4:50 AM', 'Alert', 'Sent the owner one heads-up, because the job runs past the night shift.');
-      bump();
-      await wait(900, t);
+    { time: function(){ return S.sup === 'B' ? '5:45 AM' : '4:50 AM'; },
+      title: function(){ return S.sup === 'B' ? 'The part is in and the truck is done' : 'The owner needs to know'; },
+      touches: ['shop', 'driver'], run: async function(t){
+      var P = PROB[S.prob], E = eta();
+      if (S.sup === 'B'){
+        narr('done');
+        addAlert('Night tech', '4:30 AM', 'The ' + P.name.toLowerCase() + ' just arrived at the front desk. Install it in bay ' + S.bay + '.');
+        addLog('4:30 AM', 'Parts', 'Supplier B delivered the ' + P.name.toLowerCase() + '. The tech is installing it.');
+        await wait(900, t);
+        addLog('5:45 AM', 'Done', 'Repair finished in bay ' + S.bay + '. Told the driver his truck is ready. No owner alert needed, the job ended before the shift did.');
+        setStatus('Done', 'active');
+        setWO('eta', 'Done 5:45 AM');
+        track(3, 'done');
+        $('trk4').setAttribute('data-i', 'trk_done'); $('trk4').textContent = T('trk_done'); track(4, 'done');
+        threadMsg('bot', T('ready'));
+        replies++;
+        bump();
+        await wait(900, t);
+      } else {
+        narr('quiet');
+        var i = await decide(t, 'The job will run past the night shift. Should the agent wake the owner?',
+          [{ label: 'Send the heads-up', sub: 'One message. Nothing needed back' }, { label: 'Hold it', sub: 'It goes in the day recap instead' }], 0, 'decide if the owner gets a heads-up.');
+        S.held = i === 1;
+        if (!S.held){
+          addAlert('Owner', '4:50 AM', "Heads-up: the " + unit() + " (" + S.plate + ") won't be done before about " + E.eta + ". Waiting on " + P.pEn + " due around " + E.due + ". The driver is informed. Nothing needed from you.");
+          addLog('4:50 AM', 'Alert', 'Sent the owner one heads-up, because the job runs past the night shift.');
+        } else {
+          addLog('4:50 AM', 'Alert', 'Held the owner heads-up as you asked. It goes in the day recap.');
+        }
+        bump();
+        await wait(900, t);
+      }
     }},
     { time: '6:00 AM', title: 'The day crew walks in', touches: ['shop'], run: async function(t){
       narr('day');
@@ -779,17 +992,20 @@ button{font:inherit;color:inherit}
     $('next').disabled = busy || playing || done;
     $('play').disabled = busy && !playing;
     $('play').textContent = playing ? 'Pause' : (done ? 'Replay' : (idx === 0 ? 'Play the night' : 'Resume'));
+    var lead = (mode === 'try' && idx === 0)
+      ? 'Try it mode: you play the driver and make the shop’s calls. Choose Watch to see it run on its own. '
+      : '';
     $('upnext').textContent = done
-      ? 'End of shift. Press Replay to run it again.'
-      : 'Step ' + (idx + 1) + ' of ' + EVENTS.length + '. Up next: ' + EVENTS[idx].title + '. New activity shows as a dot on the other tab.';
+      ? 'End of shift. Press Replay to run it again, or change a choice.'
+      : lead + 'Step ' + (idx + 1) + ' of ' + EVENTS.length + '. Up next: ' + val(EVENTS[idx].title) + '. New activity shows as a dot on the other tab.';
   }
 
   async function step(){
     if (busy || idx >= EVENTS.length) return false;
     busy = true;
     var t = run, ev = EVENTS[idx];
-    $('clock').textContent = ev.time;
-    $('now').textContent = ev.title;
+    $('clock').textContent = val(ev.time);
+    $('now').textContent = val(ev.title);
     touch(ev.touches);
     refresh();
     try {
@@ -822,12 +1038,15 @@ button{font:inherit;color:inherit}
 
   function reset(){
     run++;
+    if (pending){ var p = pending; pending = null; p.cancel(); }
     busy = false; playing = false; idx = 0;
+    defaults();
     tally = replies = alertsSent = asks = 0;
     $('tally').textContent = '0';
     $('clock').textContent = '10:45 PM';
     $('now').textContent = 'Shift starts';
     $('dot-driver').hidden = true; $('dot-shop').hidden = true;
+    $('decision').hidden = true; $('dec-opts').textContent = '';
 
     /* driver */
     showScreen('sms');
@@ -835,16 +1054,20 @@ button{font:inherit;color:inherit}
     var empty = el('p', 'sms-empty', 'No messages yet. A driver texts at 12:20 AM.');
     empty.id = 'sms-empty';
     $('sms').appendChild(empty);
-    ['mk-kw', 'pr-reefer', 'wh-20'].forEach(function(id){ $(id).classList.remove('sel'); });
-    $('in-plate').textContent = ''; $('in-code').textContent = '';
+    $('sms-in').textContent = 'Text message';
+    qa('#v-truck .chip, #v-problem .chip, #v-problem .tile').forEach(function(n){ n.classList.remove('sel'); });
+    $('in-plate').value = ''; $('in-code').value = '';
     $('photo').setAttribute('data-state', 'empty');
     $('photo-empty').hidden = false; $('photo-img').hidden = true; $('photo-ok').hidden = true;
-    ['btn-start', 'btn-send'].forEach(function(id){ $(id).classList.remove('tap'); });
+    qa('.fake-btn').forEach(function(n){ n.classList.remove('tap'); });
+    qa('.await').forEach(function(n){ n.classList.remove('await'); n.onclick = null; n.onkeydown = null; });
     $('st-title').setAttribute('data-i', 'sent_t0');
     $('st-sub').setAttribute('data-i', 'sent_sub0');
+    $('trk4').setAttribute('data-i', 'trk4');
     ['trk1', 'trk2', 'trk3', 'trk4'].forEach(function(id){ $(id).className = ''; });
     $('trk4').hidden = true;
     $('thread').textContent = '';
+    $('ask-opts').hidden = true; $('ask-opts').textContent = '';
     $('ask-in').style.color = '';
     showView('start');
     applyLang();
@@ -868,8 +1091,12 @@ button{font:inherit;color:inherit}
 
   function setLang(l){
     lang = l;
-    $('lang-en').setAttribute('aria-pressed', String(l === 'en'));
-    $('lang-es').setAttribute('aria-pressed', String(l === 'es'));
+    reset();
+  }
+  function setMode(m){
+    mode = m;
+    $('mode-try').setAttribute('aria-pressed', String(m === 'try'));
+    $('mode-watch').setAttribute('aria-pressed', String(m === 'watch'));
     reset();
   }
 
@@ -890,11 +1117,13 @@ button{font:inherit;color:inherit}
       }
     });
   });
+  $('in-plate').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-truck').click(); });
+  $('in-code').addEventListener('keydown', function(e){ if (e.key === 'Enter') $('btn-prob').click(); });
   $('next').addEventListener('click', function(){ step(); });
   $('play').addEventListener('click', play);
   $('reset').addEventListener('click', reset);
-  $('lang-en').addEventListener('click', function(){ setLang('en'); });
-  $('lang-es').addEventListener('click', function(){ setLang('es'); });
+  $('mode-try').addEventListener('click', function(){ setMode('try'); });
+  $('mode-watch').addEventListener('click', function(){ setMode('watch'); });
   reset();
 })();
 </script>
