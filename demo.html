@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Breaker Night Desk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -194,6 +199,8 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
 @media (max-width:560px){.ctrl{margin-left:0;width:100%}.ctrl .btn{flex:1}.clockbox{flex:1 1 100%}.device{height:620px}}
 </style>
 
+</head>
+<body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="bot" viewBox="0 0 160 160">
     <path d="M54 46 V20 M106 46 V20" style="stroke:var(--mark)" stroke-width="9" stroke-linecap="round" fill="none"/>
@@ -215,6 +222,7 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
     </div>
     <div class="top-tools">
       <div class="seg" role="group" aria-label="Demo mode"><button type="button" id="mode-watch" aria-pressed="true">Watch</button><button type="button" id="mode-try" aria-pressed="false">Try it</button></div>
+      <a class="btn" href="index.html" style="display:inline-flex;align-items:center;text-decoration:none;color:inherit">Back to site</a>
       <button type="button" class="btn" id="reset">Reset</button>
     </div>
   </header>
@@ -1127,3 +1135,5 @@ input.input::placeholder{color:var(--muted);font-weight:400;letter-spacing:0}
   reset();
 })();
 </script>
+</body>
+</html>
