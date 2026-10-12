@@ -1,420 +1,412 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Dispatch for Repair Shops</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payroad: money code payments for road service shops</title>
+<meta name="description" content="Payroad processes money code payments for road service shops: Comchek, EFS and more. Close your day before midnight and your money is available at 6:00 am. Trusted Shops get paid instantly.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A3A2F'/%3E%3Cg transform='translate(11 20)'%3E%3Cpolygon points='21.1,0 29.9,0 16,23.5 0,23.5' fill='%23F2EFE6'/%3E%3Cpolygon points='34.7,0 43.5,0 37.1,23.5 21.4,23.5' fill='%23B7F34A'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-/* Single phone-width column: agent, work order, signature, email, code payment, daily close. */
-:root{--bg:#f3f3f0;--card:#ffffff;--ink:#1b1f23;--mute:#626a72;--line:#d7d9db;--accent:#f2b705;--on-accent:#1b1f23;--ok:#1d7a44;--err:#b3261e;--bub-me:#1b1f23;--bub-me-ink:#ffffff;--bub-ag:#ecece8;--font:Barlow,system-ui,-apple-system,"Segoe UI",sans-serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171a;--card:#1e2226;--ink:#eceef0;--mute:#9aa2a9;--line:#353b41;--ok:#4cc27f;--err:#ff8a80;--bub-me:#f2b705;--bub-me-ink:#1b1f23;--bub-ag:#2a3036;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#14171a;--card:#1e2226;--ink:#eceef0;--mute:#9aa2a9;--line:#353b41;--ok:#4cc27f;--err:#ff8a80;--bub-me:#f2b705;--bub-me-ink:#1b1f23;--bub-ag:#2a3036;color-scheme:dark}
+:root{
+  --bg:#F4F7F2; --surface:#FFFFFF; --ink:#0E1A17; --muted:#3F524C;
+  --primary:#0D5C4B; --on-primary:#FFFFFF; --lime:#B7F34A; --on-lime:#0E1A17;
+  --border:#D3DDD7; --tint:#E4EFE9; --focus:#0D5C4B; --lane:#9DB6AA;
+  --btn-bg:#0D5C4B; --btn-fg:#FFFFFF; --btn-hover-bg:#B7F34A; --btn-hover-fg:#0E1A17; --btn-border:#0D5C4B;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0C1512; --surface:#13201C; --ink:#EAF2EE; --muted:#A8BDB4;
+    --primary:#7FD7B9; --on-primary:#0C1512;
+    --border:#263832; --tint:#1A2B25; --focus:#B7F34A; --lane:#2F4A41;
+    --btn-bg:#B7F34A; --btn-fg:#0C1512; --btn-hover-bg:#D2FA85; --btn-hover-fg:#0C1512; --btn-border:#B7F34A;
+  }
+}
 *{box-sizing:border-box}
-[hidden]{display:none!important}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.4;padding-inline:16px;padding-block:16px}
-main{max-width:520px;margin:0 auto}
-h1{font-size:26px;line-height:1.15;margin:8px 0 4px;text-wrap:balance}
-p.sub{color:var(--mute);margin:0 0 14px}
-nav{display:flex;gap:4px;margin-bottom:14px}
-nav button{flex:1;min-width:0;padding:10px 0;border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:8px;font:600 12px var(--font)}
-nav button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
-label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
-input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:400 17px var(--font)}
-.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
-.btn{display:block;width:100%;margin-top:16px;padding:14px;border:0;border-radius:8px;background:var(--accent);color:var(--on-accent);font:700 17px var(--font)}
-.btn:disabled{opacity:.4}
-.btn.alt{background:transparent;border:1px solid var(--line);color:var(--ink)}
-.btn.sm{margin-top:8px;padding:10px;font-size:15px}
-canvas{display:block;width:100%;height:150px;border:1px dashed var(--mute);border-radius:8px;background:var(--bg);touch-action:none}
-table{width:100%;border-collapse:collapse}td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}td:last-child{text-align:right;padding-left:12px;white-space:nowrap}
-tr.tot td{font-weight:700;border-bottom:0;font-size:19px}
-.tag{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:0 7px;color:var(--mute);margin-left:6px;vertical-align:1px}
-.terms{max-height:130px;overflow:auto;font-size:14px;color:var(--mute);border:1px solid var(--line);border-radius:8px;padding:10px}
-.note{font-size:13px;color:var(--mute);margin:10px 0 0}
-.ok{color:var(--ok);font-weight:700}
-.err{color:var(--err);font-size:14px;margin:10px 0 0;min-height:1.2em}
-.pm{display:flex;gap:6px;margin-top:6px}.pm button{flex:1;min-width:0;padding:10px 4px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;font:600 15px var(--font)}.pm button.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
-#chat{display:flex;flex-direction:column;gap:8px;margin:12px 0;max-height:46vh;min-height:180px;overflow-y:auto}
-.b{max-width:86%;padding:10px 12px;border-radius:14px;overflow-wrap:anywhere}
-.b.ag{align-self:flex-start;background:var(--bub-ag);border-bottom-left-radius:4px}
-.b.me{align-self:flex-end;background:var(--bub-me);color:var(--bub-me-ink);border-bottom-right-radius:4px}
-.b.sms{align-self:flex-start;max-width:92%;background:var(--card);border:1px dashed var(--mute);font-size:14px;color:var(--mute)}
-.ord{align-self:stretch;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--card)}
-.ord b{display:block;margin-bottom:6px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.chips button{padding:8px 10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;font:400 14px var(--font);text-align:left}
-.mailhead{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:12px}
-.logo{flex:0 0 44px;height:44px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font:700 16px var(--font)}
-.mailhead small{display:block;color:var(--mute);font-size:13px}
-.meth{display:flex;justify-content:space-between;gap:12px;padding:6px 0}
-.meth span:last-child{font-weight:700}
-.steps{margin:12px 0 0;padding:0;list-style:none;font-size:15px}
-.steps li{padding:4px 0}
-.steps li.good{color:var(--ok);font-weight:700}
-.steps li.bad{color:var(--err);font-weight:700}
-.scroll{overflow-x:auto}
-a{color:var(--ink);font-weight:600}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:Sora,system-ui,sans-serif;line-height:1.1;margin:0;letter-spacing:-0.02em}
+p{margin:0}
+a{color:var(--primary)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:6px}
+.wrap{width:100%;max-width:1040px;margin:0 auto;padding:0 18px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--surface);color:var(--ink);padding:12px 16px;border:1px solid var(--border);border-radius:8px;z-index:30}
+.skip:focus{left:8px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;border-radius:12px;border:2px solid var(--btn-border);background:var(--btn-bg);color:var(--btn-fg);font:600 17px/1 Inter,sans-serif;text-decoration:none;cursor:pointer;transition:background .15s,color .15s}
+.btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-fg)}
+.btn.small{min-height:44px;padding:0 16px;font-size:15px}
+
+/* placeholders for facts that must be supplied */
+.fill{display:inline;background:var(--tint);border:1px dashed var(--primary);border-radius:6px;padding:1px 6px;font-size:.92em;overflow-wrap:anywhere}
+
+header{border-bottom:1px solid var(--border)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px}
+.logo{display:inline-flex;align-items:center;gap:12px;min-height:44px;color:var(--ink);text-decoration:none;font:800 26px/1 Sora,sans-serif;letter-spacing:-0.035em}
+.mark{flex:none}
+.mark .ma,.mark .mb{fill:#0A3A2F}
+.mark .md{fill:#B7F34A}
+@media (prefers-color-scheme: dark){.mark .ma{fill:#F2EFE6}.mark .mb{fill:#B7F34A}}
+
+/* hero */
+.hero{padding:48px 0 56px}
+.hero .grid{display:grid;gap:36px}
+h1{font-size:clamp(38px,10.5vw,68px);font-weight:800}
+h1 mark{background:var(--lime);color:var(--on-lime);padding:0 .14em;border-radius:8px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.sub{margin-top:20px;font-size:clamp(19px,4.6vw,23px);color:var(--muted);max-width:26em}
+.cta{margin-top:28px}
+.names{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+.names span{padding:6px 14px;border:1px solid var(--border);border-radius:999px;background:var(--surface);font-size:15px;font-weight:600}
+
+/* one simple visual: a code becoming a deposit */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:20px;max-width:420px;width:100%;box-shadow:0 14px 34px -18px rgba(14,26,23,.35)}
+.card .k{display:flex;justify-content:space-between;gap:8px;font:600 12px/1.3 Sora,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.card .amt{margin:14px 0 4px;font:800 36px/1.1 Sora,sans-serif;letter-spacing:-.02em}
+.card .m{font-size:15px;color:var(--muted)}
+.pill{display:inline-block;padding:2px 12px;border-radius:999px;font:600 13px/1.6 Inter,sans-serif;background:var(--lime);color:var(--on-lime)}
+.lane{height:4px;border-radius:2px;margin:18px 0;background:repeating-linear-gradient(90deg,var(--lane) 0 24px,transparent 24px 42px)}
+.card .row{display:flex;justify-content:space-between;gap:10px;font-size:15px;padding:6px 0}
+.card .row span:first-child{color:var(--muted)}
+.card .smp{margin-top:10px;font-size:12.5px;color:var(--muted)}
+
+/* speed band: the differentiator */
+.speed{display:grid;gap:0;margin-top:30px;align-items:stretch}
+.sb{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px}
+.sb .t{font:600 13px/1.3 Sora,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.sb .b{margin:8px 0 6px;font:800 clamp(30px,8vw,46px)/1.05 Sora,sans-serif;letter-spacing:-.02em}
+.sb p{color:var(--muted);font-size:17px}
+.sb.go{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.sb p.b{color:var(--ink)}
+.sb.go .t,.sb.go p{color:inherit;opacity:.92}
+.sb.go p.b{color:inherit;opacity:1}
+.sb.go .b mark{background:var(--lime);color:var(--on-lime);padding:0 .12em;border-radius:8px}
+.lv{width:4px;height:36px;margin:0 auto;background:repeating-linear-gradient(180deg,var(--lane) 0 10px,transparent 10px 18px)}
+.note2{margin-top:16px;font-size:15px;color:var(--muted)}
+/* plans */
+.plans{display:grid;gap:14px;margin-top:30px}
+.plan{position:relative;background:var(--bg);border:1px solid var(--border);border-radius:18px;padding:26px 22px;display:flex;flex-direction:column;gap:10px}
+.plan h3{font-size:22px}
+.plan .when{font:800 clamp(28px,7vw,38px)/1.05 Sora,sans-serif;letter-spacing:-.02em}
+.plan .price{font-size:15.5px;color:var(--muted)}
+.plan ul{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:8px}
+.plan li{position:relative;padding-left:28px;font-size:16.5px}
+.plan li::before{content:"\2713";position:absolute;left:0;top:2px;width:20px;height:20px;border-radius:50%;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font:700 12px/1 Inter,sans-serif}
+.plan .btn{margin-top:auto}
+.plan.pro{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.plan.pro .price,.plan.pro .fill{color:inherit}
+.plan.pro .fill{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.6)}
+.plan.pro li::before{background:var(--lime);color:var(--on-lime)}
+.plan.pro .when mark{background:var(--lime);color:var(--on-lime);padding:0 .12em;border-radius:8px}
+.plan.pro .btn{background:var(--lime);color:var(--on-lime);border-color:var(--lime)}
+.plan.pro .btn:hover{background:#fff;border-color:#fff;color:#0E1A17}
+.badge{align-self:flex-start;background:var(--lime);color:var(--on-lime);border-radius:999px;padding:2px 12px;font:700 12px/1.7 Sora,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+section{padding:56px 0}
+section.alt{background:var(--surface);border-block:1px solid var(--border)}
+h2{font-size:clamp(28px,7vw,40px);font-weight:700;max-width:18em}
+
+/* steps */
+.steps{margin-top:30px;display:grid;gap:14px}
+.step{display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:20px}
+section.alt .step{background:var(--bg)}
+.num{width:48px;height:48px;border-radius:12px;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font:800 20px/1 Sora,sans-serif}
+.step h3{font-size:21px;margin-bottom:4px}
+.step p{color:var(--muted)}
+
+/* covered list */
+.list{margin:28px 0 0;padding:0;list-style:none;display:grid;gap:10px;max-width:640px}
+.list li{position:relative;padding:14px 16px 14px 52px;background:var(--surface);border:1px solid var(--border);border-radius:14px;font-weight:500}
+.list li::before{content:"\2713";position:absolute;left:14px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font:700 14px/1 Inter,sans-serif}
+
+/* faq */
+.faq{margin-top:24px;display:grid;gap:10px;max-width:760px}
+details{background:var(--surface);border:1px solid var(--border);border-radius:12px}
+summary{cursor:pointer;list-style:none;min-height:52px;padding:12px 48px 12px 18px;font:600 17px/1.4 Inter,sans-serif;position:relative;display:flex;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:18px;top:50%;transform:translateY(-50%);font:600 22px/1 Inter,sans-serif;color:var(--primary)}
+details[open] summary::after{content:"\2212"}
+details .a{padding:0 18px 16px;color:var(--muted);font-size:16.5px}
+
+/* final cta */
+.final{padding:0 0 64px}
+.final .box{background:var(--primary);color:var(--on-primary);border-radius:22px;padding:36px 20px}
+@media (prefers-color-scheme: dark){.final .box{background:var(--surface);border:1px solid var(--border);color:var(--ink)}}
+.final p.l{margin-top:10px;max-width:30em;opacity:.95}
+form{margin-top:22px;display:grid;gap:10px;max-width:540px}
+label{font-weight:600;font-size:15px}
+.row2{display:grid;gap:10px}
+input[type=email]{width:100%;min-height:52px;padding:0 14px;border-radius:12px;border:2px solid transparent;background:#fff;color:#0E1A17;font:400 17px Inter,sans-serif}
+input[type=email]:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+.final .btn{background:var(--lime);color:var(--on-lime);border-color:var(--lime)}
+.final .btn:hover{background:#fff;border-color:#fff;color:#0E1A17}
+.status{min-height:24px;font-size:15px}
+.final .fine{font-size:13.5px;opacity:.92}
+
+footer{border-top:1px solid var(--border);padding:30px 0 40px;font-size:14.5px;color:var(--muted)}
+footer .wrap{display:grid;gap:28px}
+footer strong{color:var(--ink)}
+footer .cols{display:grid;grid-template-columns:1fr 1fr;gap:28px 20px}
+footer .brand{grid-column:1 / -1;display:grid;gap:8px;max-width:26em;align-content:start}
+footer h3{font:700 13px/1.3 Sora,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:6px}
+footer ul{list-style:none;margin:0;padding:0}
+footer li a{display:inline-flex;align-items:center;min-height:44px;color:var(--muted);text-decoration:none;font-size:15.5px}
+footer li a:hover{color:var(--primary);text-decoration:underline}
+footer li.t{padding:10px 0;font-size:15px}
+footer .legal{border-top:1px solid var(--border);padding-top:20px;display:grid;gap:8px}
+
+@media (min-width:760px){
+  .wrap{padding:0 28px}
+  .hero{padding:88px 0 96px}
+  .hero .grid{grid-template-columns:1.15fr .85fr;align-items:center;gap:56px}
+  .speed{grid-template-columns:1fr 90px 1fr;align-items:center}
+  .lv{width:auto;height:4px;margin:0 12px;background:repeating-linear-gradient(90deg,var(--lane) 0 14px,transparent 14px 26px)}
+  .plans{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:repeat(3,1fr)}
+  footer .cols{grid-template-columns:1.4fr 1fr 1fr 1fr}
+  footer .brand{grid-column:auto}
+  .step{grid-template-columns:1fr;gap:14px}
+  .row2{grid-template-columns:1fr auto}
+  .final .box{padding:52px 48px}
+}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important;animation:none !important}
+}
 </style>
-<main>
-<h1>Dispatch for truck repair shops</h1>
-<p class="sub">Prototype: the agent answers the driver, the customer signs and pays with a Comdata or EFS code, and the shop sees its daily close. Everything is simulated and no real money moves.</p>
-<nav id="nav"><button data-s="0" class="on">Agent</button><button data-s="1">Shop</button><button data-s="2">Customer</button><button data-s="3">Email</button><button data-s="4">Pay</button><button data-s="5">Close</button></nav>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
 
-<section id="s0" class="card">
-  <b>You're the driver</b>
-  <p class="note" style="margin-top:2px">Tell Dispatch what happened. Type a message or tap a suggestion.</p>
-  <div id="chat" aria-live="polite"></div>
-  <form id="cf" class="row">
-    <input id="msg" placeholder="Type your message" autocomplete="off" aria-label="Message to the agent">
-    <button class="btn" id="snd" type="submit" style="margin:0;flex:0 0 92px">Send</button>
-  </form>
-  <div id="chips" class="chips"></div>
-  <button class="btn alt" id="rst" type="button">New conversation</button>
-  <p class="note">Scripted replies for the demo. The real version uses Claude to understand any way of describing the problem, in English or Spanish, and by phone call too.</p>
-</section>
-
-<section id="s1" class="card" hidden>
-  <b>Create a work order by hand</b>
-  <label for="cli">Customer (company)</label><input id="cli" value="Test Logistics">
-  <label for="drv">Driver</label><input id="drv" value="Juan Perez">
-  <label for="ctc">Driver's cell or email</label><input id="ctc" value="+1 210 555 0100">
-  <label for="trk">Truck</label><input id="trk" value="Volvo 860, 2021">
-  <label for="svc">Service</label>
-  <select id="svc"><option value="225|Roadside service (per hour)">Roadside service, $225/hr</option><option value="285|After-hours roadside (per hour)">After-hours roadside, $285/hr</option><option value="189|Shop labor (per hour)">Shop labor, $189/hr</option><option value="249|Diagnostics (per hour)">Diagnostics, $249/hr</option></select>
-  <div class="row"><div><label for="hrs">Hours</label><input id="hrs" type="number" value="2" min="0.5" step="0.5"></div><div><label for="mil">Miles</label><input id="mil" type="number" value="20" min="0"></div></div>
-  <label for="prt">Parts ($)</label><input id="prt" type="number" value="0" min="0">
-  <button class="btn" id="send" type="button">Send order to customer</button>
-  <p class="note">This is what the agent does, but by filling out a form. The real version sends a link by text or email.</p>
-</section>
-
-<section id="s2" class="card" hidden>
-  <b>What the customer sees on their phone</b>
-  <p class="note" id="wo"></p>
-  <div class="terms">I authorize Truck &amp; Tire Masters to perform diagnostics, roadside service and repairs on my vehicle. Roadside repairs may be temporary and carry no warranty. No refunds for completed labor, travel time or diagnostics. Convenience fee: 3.5% for card payments and 3% for codes or checks. The vehicle may be held until paid in full.</div>
-  <label for="sig">Sign here</label>
-  <canvas id="sig"></canvas>
-  <button class="btn alt" id="clr" type="button">Clear signature</button>
-  <button class="btn" id="appr" type="button" disabled>Approve work order</button>
-</section>
-
-<section id="s3" class="card" hidden>
-  <p class="note" style="margin:0 0 10px">The email the payer receives as soon as the order is signed.</p>
-  <div class="mailhead"><div class="logo">TM</div><div><b>Your invoice is ready</b><small>Truck &amp; Tire Masters LLC</small></div></div>
-  <p style="margin:0 0 10px">Complete your payment with the button below.</p>
-  <table><tr><td>Transaction</td><td id="mtx"></td></tr><tr><td>Subtotal</td><td id="msub"></td></tr></table>
-  <p class="note">The total includes a convenience fee and changes with the payment method.</p>
-  <div id="mmeth" style="margin-top:8px"></div>
-  <button class="btn" id="viewinv" type="button">View invoice and pay</button>
-  <p class="note" style="text-align:center">Powered by RoadPay (working name)</p>
-</section>
-
-<section id="s4" class="card" hidden>
-  <div id="payform">
-    <b>Pay your invoice for Truck &amp; Tire Masters LLC</b>
-    <table id="inv" style="margin-top:8px"></table>
-    <label>Payment method</label>
-    <div class="pm" id="pm"><button data-m="code" class="on" type="button">Code or check</button><button data-m="card" type="button">Card</button></div>
-
-    <div id="codef">
-      <label>Network that issued the code</label>
-      <div class="pm" id="nets"><button data-n="Comdata" class="on" type="button">Comdata</button><button data-n="EFS" type="button">EFS</button><button data-n="T-Chek" type="button">T-Chek</button></div>
-      <label for="mc" id="mclab">Comdata Express Code</label>
-      <input id="mc" inputmode="numeric" placeholder="Enter the code" autocomplete="off">
-      <div class="row"><button class="btn alt sm" id="tgood" type="button">Test code</button><button class="btn alt sm" id="tbad" type="button">Declined code</button></div>
-      <p class="note">Please note that checks cannot be refunded.</p>
-      <label>Additional information (may be required)</label>
-      <div class="row"><input id="fn" placeholder="First name" aria-label="First name"><input id="ln" placeholder="Last name" aria-label="Last name"></div>
-      <input id="dn" placeholder="Driver number" aria-label="Driver number" style="margin-top:8px">
-      <div class="row" style="margin-top:8px"><input id="un" placeholder="Unit number" aria-label="Unit number"><input id="tn" placeholder="Trip number" aria-label="Trip number"></div>
-    </div>
-
-    <div id="cardf" hidden>
-      <label for="cn">Card number</label><input id="cn" inputmode="numeric" placeholder="4242 4242 4242 4242" maxlength="19">
-      <div class="row"><div><label for="ce">Expires</label><input id="ce" placeholder="MM/YY" maxlength="5"></div><div><label for="cc">CVC</label><input id="cc" inputmode="numeric" placeholder="123" maxlength="4"></div></div>
-    </div>
-
-    <p class="err" id="perr" role="alert"></p>
-    <button class="btn" id="pay" type="button">Pay</button>
-    <ul class="steps" id="vsteps" aria-live="polite"></ul>
+<header>
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Payroad home">
+      <svg class="mark" width="52" height="28" viewBox="0 0 272 147" aria-hidden="true" focusable="false">
+        <polygon class="ma" points="132,0 187,0 100,147 0,147"/>
+        <polygon class="mb" points="217,0 272,0 232,147 134,147"/>
+        <rect class="md" x="154" y="58" width="26" height="7" rx="1.5"/>
+      </svg>
+      Payroad
+    </a>
+    <a class="btn small" href="#join">Join the waitlist</a>
   </div>
+</header>
 
-  <div id="payok" hidden>
-    <p class="ok" style="font-size:20px;margin:0 0 6px">Payment received</p>
-    <table id="rec"></table>
-    <p class="note" id="recnote"></p>
-    <button class="btn" id="goclose" type="button">See the daily close</button>
-    <button class="btn alt" id="again" type="button">Take another call</button>
+<main id="main">
+<div id="top"></div>
+
+<!-- HERO: one message -->
+<section class="hero" style="padding-bottom:56px">
+  <div class="wrap grid">
+    <div>
+      <h1>We help road service shops <mark>accept money codes.</mark></h1>
+      <p class="sub">Payroad processes Comchek, EFS and other money code payments for road service shops. Close your day before midnight and your money is available at 6:00 am. Trusted Shops are paid instantly.</p>
+      <div class="cta"><a class="btn" href="#join">Join the waitlist</a></div>
+      <div class="names" aria-label="Codes we work with"><span>Comchek</span><span>EFS</span><span>Other money codes</span></div>
+    </div>
+
+    <!-- Illustration with sample data only -->
+    <div class="card" role="img" aria-label="Illustration: a money code accepted for a tire replacement, with the payment going to the shop. Sample data.">
+      <div class="k"><span>Money code</span><span class="pill">Accepted</span></div>
+      <div class="amt">$1,240.00</div>
+      <div class="m">Unit 2210 &middot; Steer tire replacement</div>
+      <div class="lane"></div>
+      <div class="row"><span>Paid to</span><span>Your shop</span></div>
+      <div class="row"><span>Available</span><span>Tomorrow, 6:00 am</span></div>
+      <p class="smp">Sample data. Not a real transaction.</p>
+    </div>
   </div>
 </section>
 
-<section id="s5" class="card" hidden>
-  <b>Daily close</b>
-  <p class="note" style="margin-top:2px">Cutoff at 11:00 PM. Deposit at 6:00 AM. Rows tagged "Example" are sample data; rows tagged "Test" come from payments you made in this demo.</p>
-  <div class="scroll"><table id="led"></table></div>
-  <label for="adv">Advance fee charged to the shop (%)</label>
-  <input id="adv" type="number" value="1" min="0" max="10" step="0.1">
-  <p class="note">A demo assumption, not a price. Change it to see the effect.</p>
-  <table id="sum" style="margin-top:10px"></table>
-  <p class="note" id="floatn"></p>
-  <button class="btn" id="closeday" type="button">Close the day and schedule deposit</button>
-  <p class="ok" id="closed" hidden></p>
+<!-- SPEED: the differentiator -->
+<section id="speed" style="padding-top:8px">
+  <div class="wrap">
+    <h2>Paid the next morning</h2>
+    <div class="speed">
+      <div class="sb"><p class="t">You</p><p class="b">Close your day before midnight</p><p>Finish your jobs and close the day as usual.</p></div>
+      <div class="lv" aria-hidden="true"></div>
+      <div class="sb go"><p class="t">Your money</p><p class="b"><mark>6:00 am</mark></p><p>Available the next day.</p></div>
+    </div>
+    <p class="note2"><span class="fill">[FILL IN: time zone, which codes qualify and any conditions]</span></p>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plans" class="alt">
+  <div class="wrap">
+    <h2>Two ways to get paid</h2>
+    <div class="plans">
+      <div class="plan">
+        <h3>Payroad</h3>
+        <p class="when">Next morning, 6:00 am</p>
+        <p class="price">Price: <span class="fill">[FILL IN: monthly price and fees]</span></p>
+        <ul>
+          <li>Accept Comchek, EFS and other money codes</li>
+          <li>Close your day before midnight</li>
+          <li>Money available at 6:00 am</li>
+          <li>The status of every payment</li>
+        </ul>
+        <a class="btn" href="#join">Join the waitlist</a>
+      </div>
+      <div class="plan pro">
+        <span class="badge">Trusted Shop</span>
+        <h3>Payroad Pro</h3>
+        <p class="when"><mark>Instantly</mark></p>
+        <p class="price">Price: <span class="fill">[FILL IN: monthly price and instant-payout fee]</span></p>
+        <ul>
+          <li>Everything in Payroad</li>
+          <li>Your money is available right away, with no waiting for the morning</li>
+          <li>Join the Trusted Shop network <span class="fill">[FILL IN: how shops qualify]</span></li>
+        </ul>
+        <a class="btn" href="#join">Join the waitlist</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <h2>Three steps, same every time</h2>
+    <div class="steps">
+      <div class="step"><span class="num">1</span><div><h3>Do the job</h3><p>The driver pays with a money code from their fleet or broker.</p></div></div>
+      <div class="step"><span class="num">2</span><div><h3>Enter the code</h3><p>Put it into Payroad. Payroad takes it from there.</p></div></div>
+      <div class="step"><span class="num">3</span><div><h3>Get paid</h3><p>Close your day before midnight. Your money is available at 6:00 am the next day. Trusted Shops: instantly.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S COVERED -->
+<section class="alt" id="covered">
+  <div class="wrap">
+    <h2>Built around money code payments</h2>
+    <p class="lead" style="margin-top:12px;color:var(--muted);max-width:34em">Payroad focuses on getting you paid: Comchek, EFS and other money codes, from the code to your deposit.</p>
+    <ul class="list">
+      <li>Comchek and EFS codes</li>
+      <li>Money at 6:00 am the next day, or instantly for Trusted Shops</li>
+      <li>The status of every payment, from code to deposit</li>
+      <li>Other codes and networks <span class="fill">[FILL IN: which ones]</span></li>
+    </ul>
+    <p style="margin-top:22px;color:var(--muted);max-width:32em">Fees: <span class="fill">[FILL IN: fees and who pays them]</span></p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <h2>Questions shops ask</h2>
+    <div class="faq">
+      <details>
+        <summary>What is a money code?</summary>
+        <div class="a">A code a fleet or broker issues so a shop or tow operator can be paid for a specific job.</div>
+      </details>
+      <details>
+        <summary>When do I get paid?</summary>
+        <div class="a">Close your day before midnight and your money is available at 6:00 am the next day. Trusted Shops get paid instantly. <span class="fill">[FILL IN: time zone, qualifying codes and conditions]</span></div>
+      </details>
+      <details>
+        <summary>What is a Trusted Shop?</summary>
+        <div class="a">A shop on the Payroad Pro plan that gets its money instantly instead of the next morning. <span class="fill">[FILL IN: requirements to qualify, limits and fees]</span></div>
+      </details>
+      <details>
+        <summary>What does it cost?</summary>
+        <div class="a"><span class="fill">[FILL IN: fees and who pays them]</span></div>
+      </details>
+      <details>
+        <summary>Is Payroad connected to Comchek or EFS?</summary>
+        <div class="a">No. Payroad is independent and is not endorsed by either. <span class="fill">[FILL IN: licensing, partners and security, only what is true]</span></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="join" class="final" style="padding-top:56px">
+  <div class="wrap">
+    <div class="box">
+      <h2>Close tonight. Paid at 6:00 am.</h2>
+      <p class="l">Leave your email and we will write when your spot is ready.</p>
+      <!--
+        NO BACKEND: this form does not send data anywhere. On submit, the script below opens the
+        visitor's email app with a pre-filled message to the address in WAITLIST_EMAIL.
+        Replace the placeholder address, or point the form at a real endpoint, before launch.
+      -->
+      <form id="waitlist" novalidate>
+        <label for="email">Email address</label>
+        <div class="row2">
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@yourshop.com" required aria-describedby="status">
+          <button class="btn" type="submit">Join the waitlist</button>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+        <p class="fine">Placeholder form for now: it opens your email app instead of saving your address.</p>
+      </form>
+    </div>
+  </div>
 </section>
 </main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div class="brand">
+        <strong>Payroad</strong>
+        <p>Payroad processes money code payments for road service shops.</p>
+      </div>
+      <nav aria-label="Product">
+        <h3>Product</h3>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#plans">Plans</a></li>
+          <li><a href="#plans">Trusted Shop</a></li>
+          <li><a href="#join">Join the waitlist</a></li>
+        </ul>
+      </nav>
+      <!-- Resources: every link points at a section on this page. Replace with real pages (blog, help center, guides) as they exist. -->
+      <nav aria-label="Resources">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#faq">What is a money code?</a></li>
+          <li><a href="#covered">Comchek and EFS codes</a></li>
+          <li><a href="#speed">When you get paid</a></li>
+          <li><a href="#faq">Questions</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h3>Company</h3>
+        <ul>
+          <li class="t"><span class="fill">[FILL IN: legal company name]</span></li>
+          <li class="t">Contact: <span class="fill">[FILL IN: email or phone]</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <p><span class="fill">[FILL IN: Terms of Use and Privacy Policy links]</span> &middot; <span class="fill">[FILL IN: &copy; year and legal name]</span></p>
+      <p>Payroad is an independent company and is not affiliated with Rig.</p>
+      <p>Comchek and EFS are trademarks of their respective owners.</p>
+    </div>
+  </div>
+</footer>
+
 <script>
-var $=function(i){return document.getElementById(i)};
-var st={step:0,signed:false,paid:false,method:"code",net:"Comdata",o:null,used:{},ledger:[],closed:false};
-var money=function(n){return "$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})};
-var cents=function(n){return Math.round(n*100)/100};
-var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
-var nowT=function(){return new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})};
-var RATE={code:0.03,card:0.035};
-
-/* Sample rows so the daily close doesn't open empty */
-st.ledger=[
- {t:"9:42 AM",net:"EFS",base:485.00,tag:"Example"},
- {t:"11:15 AM",net:"Comdata",base:1240.50,tag:"Example"},
- {t:"2:30 PM",net:"EFS",base:310.00,tag:"Example"},
- {t:"6:05 PM",net:"T-Chek",base:760.00,tag:"Example"}
-];
-
-/* ---------- navigation ---------- */
-function show(n){
-  st.step=n;
-  [0,1,2,3,4,5].forEach(function(i){$("s"+i).hidden=(i!==n)});
-  document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",+b.dataset.s===n)});
-  if(n===2)clr();
-  if(n===3)buildMail();
-  if(n===4){$("perr").textContent="";buildInv()}
-  if(n===5)buildClose();
-  window.scrollTo(0,0);
-}
-document.querySelectorAll("#nav button").forEach(function(b){b.onclick=function(){
-  var n=+b.dataset.s;
-  if(n<=1||n===5||(n===2&&st.o)||((n===3||n===4)&&st.signed))show(n);
-}});
-
-/* ---------- pricing ---------- */
-function lines(){
-  var o=st.o,t=o.svc.split("|"),r=+t[0],L=[[t[1]+" × "+o.hrs,r*o.hrs]];
-  if(o.mil>0)L.push(["Mileage × "+o.mil+" mi ($2.48)",o.mil*2.48]);
-  if(o.prt>0)L.push(["Parts",o.prt]);
-  return L;
-}
-function total(){return cents(lines().reduce(function(a,l){return a+l[1]},0))}
-function newOrder(o){st.o=o;st.signed=false;st.paid=false;$("appr").disabled=true;
-  $("wo").textContent="Order "+o.id+" · "+o.cli+" · "+o.trk+(o.problem?" · "+o.problem:"")+(o.loc?" · Location: "+o.loc:"")}
-
-/* ---------- Dispatch agent (simulated) ---------- */
-var ag={ask:"problem",d:{}};
-var chat=$("chat");
-function say(who,text){var d=document.createElement("div");d.className="b "+who;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
-function agentSay(text,after){setTimeout(function(){say("ag",text);if(after)after()},450)}
-function setChips(){
-  var map={problem:["I got a flat tire on I-35 near Pearsall","My truck won't start, I'm in San Antonio","I had an accident"],
-           loc:["Text me the link","I-35 south, mile marker 85, near Pearsall"],truck:["Volvo 860, 2021"],co:["Test Logistics"],ph:["+1 210 555 0100"]};
-  var c=$("chips");c.innerHTML="";
-  (map[ag.ask]||[]).forEach(function(t){var b=document.createElement("button");b.type="button";b.textContent=t;b.onclick=function(){send(t)};c.appendChild(b)});
-}
-function kind(t){
-  if(/tire|flat|blowout|llanta|ponch/i.test(t))return "flat tire";
-  if(/won'?t start|no start|dead battery|crank|enciend|arranc/i.test(t))return "won't start";
-  if(/\bdef\b|check engine|engine|motor/i.test(t))return "engine or DEF fault";
-  return "mechanical issue";
-}
-function nextAsk(){
-  var d=ag.d;
-  if(!d.loc){ag.ask="loc";agentSay((d.hint?"You said "+d.hint+". ":"")+"Can I text you a link to share your exact location? It's faster and more accurate than describing it. You can also type it.",setChips)}
-  else if(!d.truck){ag.ask="truck";agentSay("What truck is it? Make, model and year.",setChips)}
-  else if(!d.co){ag.ask="co";agentSay("What company is the service for?",setChips)}
-  else if(!d.ph){ag.ask="ph";agentSay("What cell number should I text the signing link to?",setChips)}
-  else finish();
-}
-function finish(){
-  ag.ask="done";setChips();$("msg").disabled=true;$("snd").disabled=true;
-  var d=ag.d,h=new Date().getHours(),after=(h<7||h>=18),rate=after?285:225,label=after?"After-hours roadside (per hour)":"Roadside service (per hour)";
-  newOrder({cli:d.co,drv:"Driver",ctc:d.ph,trk:d.truck,svc:rate+"|"+label,hrs:2,mil:25,prt:0,id:Math.floor(100000+Math.random()*900000),problem:kind(d.problem),loc:d.loc,coords:d.coords});
-  agentSay("Done. I built your work order with an estimate and texted you the link. Open it, review it and sign.",function(){
-    say("sms","SMS to "+d.ph+": Truck Masters. Sign your work order here: dispatch.example/o/"+st.o.id+" (simulated)");
-    var box=document.createElement("div");box.className="ord";
-    var rows="";lines().forEach(function(l){rows+="<tr><td>"+esc(l[0])+"</td><td>"+money(l[1])+"</td></tr>"});
-    rows+='<tr class="tot"><td>Estimate</td><td>'+money(total())+"</td></tr>";
-    box.innerHTML="<b>Order "+st.o.id+"</b><div class='note' style='margin:0 0 6px'>"+esc(st.o.cli)+" · "+esc(st.o.trk)+" · "+esc(st.o.problem)+"</div><table>"+rows+"</table>"+(st.o.coords?"<p class='note'>Driver location: "+esc(st.o.loc)+" · <a href='"+mapsUrl(st.o.coords)+"' target='_blank' rel='noopener'>Open in Maps</a></p>":"")+"<p class='note'>The final price depends on actual work time. "+(after?"After-hours":"Daytime")+" rate, based on the current time.</p>";
-    var go=document.createElement("button");go.type="button";go.className="btn";go.textContent="Open the link as the customer";go.onclick=function(){show(2)};
-    box.appendChild(go);chat.appendChild(box);chat.scrollTop=chat.scrollHeight;
+  // Placeholder address. Replace before launch.
+  var WAITLIST_EMAIL = "waitlist@payroad.example";
+  var form = document.getElementById("waitlist");
+  var email = document.getElementById("email");
+  var status = document.getElementById("status");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var v = email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      status.textContent = "Please enter a valid email address.";
+      email.focus();
+      return;
+    }
+    status.textContent = "Opening your email app to send this.";
+    window.location.href = "mailto:" + WAITLIST_EMAIL +
+      "?subject=" + encodeURIComponent("Payroad waitlist") +
+      "&body=" + encodeURIComponent("Please add me to the Payroad waitlist: " + v);
   });
-}
-function send(text){
-  text=(text||"").trim();if(!text||ag.ask==="done"||ag.ask==="human"||ag.ask==="wait")return;
-  say("me",text);$("msg").value="";
-  if(/accident|fire|smoke|injur|hurt|crash|accidente|incendio|fuego|herid|humo/i.test(text)){
-    ag.ask="human";setChips();$("msg").disabled=true;$("snd").disabled=true;
-    agentSay("If anyone is hurt or in danger, hang up and call 911 now. I'm transferring you to someone at the shop.");return;
-  }
-  var d=ag.d;
-  if(ag.ask==="problem"){
-    d.problem=text;
-    var m=text.match(/(i-?\s?\d+[^,.]*|hwy[^,.]*|near [^,.]+|\bon [^,.]+|\bin [^,.]+|cerca de [^,.]+)/i);
-    if(m)d.hint=m[0];
-    agentSay("Got it, a "+kind(text)+".",nextAsk);return;
-  }
-  if(ag.ask==="loc"&&/\blink\b|text me|share|gps|send me/i.test(text)){startShare();return}
-  d[ag.ask]=text;nextAsk();
-}
-/* The driver taps a texted link and shares GPS. The demo uses a sample point near Pearsall, TX. */
-var SAMPLE={lat:28.8920,lng:-98.9748,acc:8};
-function mapsUrl(c){return "https://www.google.com/maps?q="+c.lat+","+c.lng}
-function startShare(){
-  ag.ask="wait";setChips();
-  agentSay("Sending you a text now. Tap the link and choose Share my location.",function(){
-    say("sms","Text to this number: Truck Masters wants your location. Tap to share: dispatch.example/l/"+digits(5)+" (simulated)");
-    var box=document.createElement("div");box.className="ord";
-    box.innerHTML="<b>On the driver's phone</b><div class='note' style='margin:0 0 8px'>Truck Masters is asking for your location so a technician can find you.</div>";
-    var go=document.createElement("button");go.type="button";go.className="btn";go.style.marginTop="0";go.textContent="Share my location";
-    go.onclick=function(){
-      go.disabled=true;go.textContent="Getting your location…";
-      setTimeout(function(){
-        ag.d.coords=SAMPLE;ag.d.loc=SAMPLE.lat.toFixed(4)+", "+SAMPLE.lng.toFixed(4);
-        go.hidden=true;
-        var r=document.createElement("div");
-        r.innerHTML="<span class='ok'>Location shared</span><div style='margin-top:4px'>"+ag.d.loc+" · accurate to about "+SAMPLE.acc+" m</div><a href='"+mapsUrl(SAMPLE)+"' target='_blank' rel='noopener'>Open in Maps</a><p class='note'>Demo: this is a sample point. The real link reads the phone's GPS.</p>";
-        box.appendChild(r);chat.scrollTop=chat.scrollHeight;
-        ag.ask="loc";
-        agentSay("Got your exact location. Thanks.",nextAsk);
-      },900);
-    };
-    box.appendChild(go);chat.appendChild(box);chat.scrollTop=chat.scrollHeight;
-  });
-}
-$("cf").addEventListener("submit",function(e){e.preventDefault();send($("msg").value)});
-function resetChat(){chat.innerHTML="";ag={ask:"problem",d:{}};$("msg").disabled=false;$("snd").disabled=false;
-  say("ag","Truck Masters, this is Dispatch, the virtual assistant. What happened to the truck, and where are you?");setChips()}
-$("rst").onclick=resetChat;
-
-/* ---------- shop (manual form) ---------- */
-$("send").onclick=function(){
-  newOrder({cli:$("cli").value,drv:$("drv").value,ctc:$("ctc").value,trk:$("trk").value,svc:$("svc").value,hrs:+$("hrs").value||1,mil:+$("mil").value||0,prt:+$("prt").value||0,id:Math.floor(100000+Math.random()*900000)});
-  show(2);
-};
-
-/* ---------- signature ---------- */
-var cv=$("sig"),cx=cv.getContext("2d"),dr=false;
-function size(){var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;cv.width=Math.max(1,r.width*d);cv.height=Math.max(1,r.height*d);cx.setTransform(d,0,0,d,0,0);cx.lineWidth=2.5;cx.lineCap="round";cx.strokeStyle=getComputedStyle(document.body).color}
-function pos(e){var r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
-cv.addEventListener("pointerdown",function(e){dr=true;var p=pos(e);cx.beginPath();cx.moveTo(p[0],p[1]);cv.setPointerCapture(e.pointerId)});
-cv.addEventListener("pointermove",function(e){if(!dr)return;var p=pos(e);cx.lineTo(p[0],p[1]);cx.stroke();$("appr").disabled=false});
-cv.addEventListener("pointerup",function(){dr=false});
-function clr(){size();cx.clearRect(0,0,cv.width,cv.height);$("appr").disabled=true}
-$("clr").onclick=clr;
-$("appr").onclick=function(){st.signed=true;st.tx=10000000+Math.floor(Math.random()*89999999);show(3)};
-
-/* ---------- email ---------- */
-function buildMail(){
-  var b=total();
-  $("mtx").textContent="#"+st.tx;$("msub").textContent=money(b);
-  var rows=[["Code or check (Comdata, EFS, T-Chek)",b+cents(b*RATE.code)],["Fuel card / fleet card",b+cents(b*RATE.card)],["Credit / debit card",b+cents(b*RATE.card)]];
-  var h="";rows.forEach(function(r){h+='<div class="meth"><span>'+r[0]+"</span><span>"+money(r[1])+"</span></div>"});
-  $("mmeth").innerHTML=h;
-}
-$("viewinv").onclick=function(){show(4)};
-
-/* ---------- invoice and payment ---------- */
-var NETLAB={Comdata:"Comdata Express Code","EFS":"EFS check or money code","T-Chek":"T-Chek code"};
-function feeNow(){return cents(total()*RATE[st.method])}
-function buildInv(){
-  var h="";lines().forEach(function(l){h+="<tr><td>"+esc(l[0])+"</td><td>"+money(l[1])+"</td></tr>"});
-  h+="<tr><td>Subtotal</td><td>"+money(total())+"</td></tr>";
-  h+="<tr><td>Convenience fee ("+(RATE[st.method]*100)+"%)</td><td>"+money(feeNow())+"</td></tr>";
-  h+='<tr class="tot"><td>Total</td><td>'+money(total()+feeNow())+"</td></tr>";
-  $("inv").innerHTML=h;$("pay").textContent="Pay "+money(total()+feeNow());
-}
-document.querySelectorAll("#pm button").forEach(function(b){b.onclick=function(){
-  st.method=b.dataset.m;
-  document.querySelectorAll("#pm button").forEach(function(x){x.classList.toggle("on",x===b)});
-  $("codef").hidden=st.method!=="code";$("cardf").hidden=st.method!=="card";
-  $("perr").textContent="";buildInv();
-}});
-document.querySelectorAll("#nets button").forEach(function(b){b.onclick=function(){
-  st.net=b.dataset.n;
-  document.querySelectorAll("#nets button").forEach(function(x){x.classList.toggle("on",x===b)});
-  $("mclab").textContent=NETLAB[st.net];
-}});
-function digits(n){var s="";for(var i=0;i<n;i++)s+=Math.floor(Math.random()*10);return s}
-$("tgood").onclick=function(){var s=digits(10);if(/0000$/.test(s))s=s.slice(0,6)+"4821";$("mc").value=s};
-$("tbad").onclick=function(){$("mc").value="1234560000"};
-$("cn").oninput=function(){this.value=this.value.replace(/\D/g,"").slice(0,16).replace(/(.{4})/g,"$1 ").trim()};
-$("ce").oninput=function(){var v=this.value.replace(/\D/g,"").slice(0,4);this.value=v.length>2?v.slice(0,2)+"/"+v.slice(2):v};
-
-function runSteps(list,final){
-  var ul=$("vsteps");ul.innerHTML="";var i=0;
-  (function next(){
-    if(i>=list.length){final();return}
-    var li=document.createElement("li");li.textContent=list[i];ul.appendChild(li);i++;
-    setTimeout(next,700);
-  })();
-}
-function finishPay(label,code,auth){
-  var b=total(),fee=feeNow(),gross=b+fee;
-  $("rec").innerHTML="<tr><td>Order</td><td>"+st.o.id+"</td></tr><tr><td>Customer</td><td>"+esc(st.o.cli)+"</td></tr><tr><td>Method</td><td>"+esc(label)+"</td></tr>"+
-    (code?"<tr><td>Code</td><td>•••• "+esc(code.slice(-4))+"</td></tr>":"")+
-    "<tr><td>Authorization</td><td>"+esc(auth)+"</td></tr><tr><td>Signed</td><td>Yes</td></tr>"+
-    "<tr><td>To the shop</td><td>"+money(b)+"</td></tr><tr class='tot'><td>Paid</td><td>"+money(gross)+"</td></tr>";
-  $("recnote").textContent=code?"The code is authorized and goes into the daily close. The shop gets the money at 6:00 AM after the cutoff.":"Card payments settle separately. Only codes and checks go through the daily close.";
-  $("goclose").hidden=!code;
-  st.paid=true;$("payform").hidden=true;$("payok").hidden=false;window.scrollTo(0,0);
-}
-$("pay").onclick=function(){
-  var e=$("perr");e.textContent="";
-  var b=$("pay");
-  if(st.method==="code"){
-    var code=$("mc").value.replace(/\D/g,"");
-    if(code.length<6){e.textContent="Enter the full code, or tap Test code.";return}
-    if(st.used[code]){e.textContent="This code was already used. Ask the carrier for a new one.";return}
-    b.disabled=true;
-    var bad=/0000$/.test(code),net=st.net;
-    var steps=["Sending the code to "+net+"…","Checking amount and merchant…"];
-    runSteps(steps,function(){
-      var ul=$("vsteps"),li=document.createElement("li");
-      if(bad){
-        li.className="bad";li.textContent=net+" declined the code: the amount or merchant doesn't match.";ul.appendChild(li);
-        e.textContent="The payment didn't go through. Check the code with the carrier.";b.disabled=false;return;
-      }
-      var auth="A"+digits(6);
-      li.className="good";li.textContent="Authorization received: "+auth;ul.appendChild(li);
-      st.used[code]=true;
-      st.ledger.push({t:nowT(),net:net,base:total(),tag:"Test",auth:auth});
-      setTimeout(function(){b.disabled=false;finishPay(net+" · code",code,auth)},700);
-    });
-  }else{
-    if($("cn").value.replace(/\s/g,"").length<16||$("ce").value.length<5||$("cc").value.length<3){e.textContent="Check the card details. To test, use 4242 4242 4242 4242, any future date and 123.";return}
-    b.disabled=true;b.textContent="Processing...";
-    setTimeout(function(){b.disabled=false;finishPay("Card",null,"T"+digits(6))},1200);
-  }
-};
-$("goclose").onclick=function(){show(5)};
-$("again").onclick=function(){
-  st.o=null;st.signed=false;st.paid=false;
-  $("payform").hidden=false;$("payok").hidden=true;$("vsteps").innerHTML="";$("mc").value="";$("perr").textContent="";
-  resetChat();show(0);
-};
-
-/* ---------- daily close ---------- */
-function addBiz(d,n){var x=new Date(d);while(n>0){x.setDate(x.getDate()+1);var w=x.getDay();if(w!==0&&w!==6)n--}return x}
-var fdate=function(d){return d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})};
-function buildClose(){
-  var h="",sum=0;
-  st.ledger.forEach(function(r){sum+=r.base;h+="<tr><td>"+esc(r.t)+" · "+esc(r.net)+'<span class="tag">'+esc(r.tag)+"</span></td><td>"+money(r.base)+"</td></tr>"});
-  $("led").innerHTML=h;
-  var pct=Math.max(0,Math.min(10,+$("adv").value||0)),fee=cents(sum*pct/100),dep=cents(sum-fee);
-  var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
-  var netPay=addBiz(new Date(),5);
-  $("sum").innerHTML="<tr><td>Codes authorized today</td><td>"+money(sum)+"</td></tr><tr><td>Advance fee ("+pct+"%)</td><td>−"+money(fee)+'</td></tr><tr class="tot"><td>Deposit at 6:00 AM</td><td>'+money(dep)+"</td></tr>";
-  $("floatn").textContent="Without an advance, the network would pay the shop around "+fdate(netPay)+" (about 5 business days, per EFS's merchant policy). With an advance, RoadPay puts up "+money(dep)+" today and recovers it from the network later. At this daily volume for 5 days, RoadPay would have about "+money(dep*5)+" advanced.";
-  $("closeday").hidden=st.closed;$("closed").hidden=!st.closed;
-  if(st.closed)$("closed").textContent="Deposit of "+money(dep)+" scheduled for 6:00 AM on "+fdate(tomorrow)+" (simulated).";
-}
-$("adv").oninput=function(){st.closed=false;buildClose()};
-$("closeday").onclick=function(){st.closed=true;buildClose()};
-
-resetChat();
 </script>
-
-</body></html>
+</body>
+</html>
