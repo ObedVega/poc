@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Customer flow - Payroad</title>
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231b1f23'/%3E%3Cg transform='translate(11 20)'%3E%3Cpolygon points='21.1,0 29.9,0 16,23.5 0,23.5' fill='%23f2b705'/%3E%3Cpolygon points='34.7,0 43.5,0 37.1,23.5 21.4,23.5' fill='%23f2b705'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Prototype. Sample data. Customer, Email and Pay screens, in the design of the earlier prototype. Nothing is sent and no money moves. */
+:root{--bg:#f3f3f0;--card:#ffffff;--ink:#1b1f23;--mute:#626a72;--line:#d7d9db;--accent:#f2b705;--on-accent:#1b1f23;--ok:#1d7a44;--err:#b3261e;--font:Barlow,system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#14171a;--card:#1e2226;--ink:#eceef0;--mute:#9aa2a9;--line:#353b41;--ok:#4cc27f;--err:#ff8a80}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.4;padding:16px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px))}
+main{max-width:520px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:22px;letter-spacing:-.02em;margin:2px 0 10px}
+.brand svg{fill:var(--ink)}
+h1{font-size:26px;line-height:1.15;margin:8px 0 4px;text-wrap:balance}
+p.sub{color:var(--mute);margin:0 0 14px}
+nav{display:flex;gap:4px;margin-bottom:14px}
+nav button{flex:1;min-width:0;min-height:44px;padding:10px 0;border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:8px;font:600 14px var(--font);cursor:pointer}
+nav button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,input:focus-visible,canvas:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+label,.lab{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:400 17px var(--font)}
+.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+.btn{display:block;width:100%;min-height:50px;margin-top:16px;padding:14px;border:0;border-radius:8px;background:var(--accent);color:var(--on-accent);font:700 17px var(--font);cursor:pointer}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.alt{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.sm{margin-top:8px;min-height:44px;padding:10px;font-size:15px}
+canvas{display:block;width:100%;height:150px;border:1px dashed var(--mute);border-radius:8px;background:var(--bg);touch-action:none}
+table{width:100%;border-collapse:collapse}
+td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td:last-child{text-align:right;padding-left:12px;white-space:nowrap}
+tr.tot td{font-weight:700;border-bottom:0;font-size:19px}
+.terms{max-height:130px;overflow:auto;font-size:14px;color:var(--mute);border:1px solid var(--line);border-radius:8px;padding:10px}
+.note{font-size:13px;color:var(--mute);margin:10px 0 0}
+.ok{color:var(--ok);font-weight:700}
+.err{color:var(--err);font-size:14px;margin:10px 0 0;min-height:1.2em}
+.pm{display:flex;gap:6px;margin-top:6px}
+.pm button{flex:1;min-width:0;min-height:44px;padding:10px 4px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;font:600 15px var(--font);cursor:pointer}
+.pm button.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.mailhead{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.logo{flex:0 0 44px;height:44px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.logo svg{fill:var(--bg)}
+.mailhead small{display:block;color:var(--mute);font-size:13px}
+.steps{margin:12px 0 0;padding:0;list-style:none;font-size:15px}
+.steps li{padding:4px 0}
+.steps li.good{color:var(--ok);font-weight:700}
+.steps li.bad{color:var(--err);font-weight:700}
+</style>
+</head>
+<body>
+<main>
+<div class="brand" aria-label="Payroad">
+  <svg width="34" height="18" viewBox="0 0 272 147" aria-hidden="true" focusable="false"><polygon points="132,0 187,0 100,147 0,147"/><polygon points="217,0 272,0 232,147 134,147"/></svg>
+  Payroad
+</div>
+<h1>What the customer sees</h1>
+<p class="sub">Prototype: the customer signs the work order, gets the email, and pays with a money code. Everything is simulated and no real money moves.</p>
+<nav id="nav" aria-label="Steps"><button type="button" data-s="0" class="on">Customer</button><button type="button" data-s="1">Email</button><button type="button" data-s="2">Pay</button></nav>
+
+<section id="s0" class="card" aria-labelledby="t0">
+  <b id="t0">Review and sign your work order</b>
+  <p class="note" style="margin-top:2px">Order WO-1046 · Sample Freight LLC · Unit 4471. Sample data, not a real work order.</p>
+  <table id="lines" style="margin-top:8px"></table>
+  <div class="lab">Terms</div>
+  <div class="terms" tabindex="0" role="region" aria-label="Terms">I authorize [FILL IN] Shop name to perform the work listed on this work order for the total shown. [FILL IN] The shop's terms go here (warranty, refunds, holding the vehicle).</div>
+  <div class="lab" id="siglab">Sign here</div>
+  <canvas id="sig" aria-labelledby="siglab" role="img"></canvas>
+  <button class="btn alt sm" id="clr" type="button">Clear signature</button>
+  <button class="btn" id="appr" type="button" disabled>Approve work order</button>
+</section>
+
+<section id="s1" class="card" hidden aria-labelledby="t1">
+  <p class="note" style="margin:0 0 10px">The email the payer receives as soon as the order is signed.</p>
+  <div class="mailhead">
+    <div class="logo"><svg width="26" height="14" viewBox="0 0 272 147" aria-hidden="true" focusable="false"><polygon points="132,0 187,0 100,147 0,147"/><polygon points="217,0 272,0 232,147 134,147"/></svg></div>
+    <div><b id="t1">Your invoice is ready</b><small>[FILL IN] Shop name, through Payroad</small></div>
+  </div>
+  <p style="margin:0 0 10px">Complete your payment with the button below.</p>
+  <table><tr><td>Transaction</td><td id="mtx"></td></tr><tr><td>Work order</td><td>WO-1046</td></tr><tr class="tot"><td>Total</td><td id="mtot"></td></tr></table>
+  <button class="btn" id="viewinv" type="button">View invoice and pay</button>
+  <p class="note" style="text-align:center">Powered by Payroad</p>
+</section>
+
+<section id="s2" class="card" hidden aria-labelledby="t2">
+  <div id="payform">
+    <b id="t2">Pay your invoice for [FILL IN] Shop name</b>
+    <table id="inv" style="margin-top:8px"></table>
+
+    <div class="lab" id="netlab">Network that issued the code</div>
+    <div class="pm" id="nets" role="group" aria-labelledby="netlab"><button data-n="Comdata" class="on" type="button" aria-pressed="true">Comdata</button><button data-n="EFS" type="button" aria-pressed="false">EFS</button><button data-n="T-Chek" type="button" aria-pressed="false">T-Chek</button></div>
+    <label for="mc" id="mclab">Comdata Express Code</label>
+    <input id="mc" inputmode="numeric" placeholder="Enter the code" autocomplete="off">
+    <div class="row"><button class="btn alt sm" id="tgood" type="button">Test code</button><button class="btn alt sm" id="tbad" type="button">Declined code</button></div>
+
+    <div class="lab">Additional information (may be required)</div>
+    <div class="row"><input id="fn" placeholder="First name" aria-label="First name"><input id="ln" placeholder="Last name" aria-label="Last name"></div>
+    <input id="dn" placeholder="Driver number" aria-label="Driver number" style="margin-top:8px">
+    <div class="row" style="margin-top:8px"><input id="un" placeholder="Unit number" aria-label="Unit number"><input id="tn" placeholder="Trip number" aria-label="Trip number"></div>
+
+    <p class="err" id="perr" role="alert"></p>
+    <button class="btn" id="pay" type="button">Pay</button>
+    <ul class="steps" id="vsteps" aria-live="polite"></ul>
+  </div>
+
+  <div id="payok" hidden>
+    <p class="ok" style="font-size:20px;margin:0 0 6px" role="status">Payment received</p>
+    <table id="rec"></table>
+    <p class="note">The code is authorized. The shop gets paid the next morning at 6:00 AM, once it closes its day.</p>
+    <button class="btn alt" id="again" type="button">Start over</button>
+  </div>
+</section>
+</main>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var st={signed:false,tx:0,net:"Comdata",used:{}};
+var LINES=[["Brake repair",980],["Air system check",140],["Mobile service call",120]];
+var TOTAL=LINES.reduce(function(a,l){return a+l[1]},0);
+var money=function(n){return "$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+function digits(n){var s="";for(var i=0;i<n;i++)s+=Math.floor(Math.random()*10);return s}
+function rows(){var h="";LINES.forEach(function(l){h+="<tr><td>"+esc(l[0])+"</td><td>"+money(l[1])+"</td></tr>"});return h+'<tr class="tot"><td>Total</td><td>'+money(TOTAL)+"</td></tr>"}
+
+/* navigation */
+function show(n){
+  [0,1,2].forEach(function(i){$("s"+i).hidden=(i!==n)});
+  document.querySelectorAll("#nav button").forEach(function(b){var on=+b.dataset.s===n;b.classList.toggle("on",on);if(on)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current")});
+  if(n===0)clr();
+  if(n===1)buildMail();
+  if(n===2){$("perr").textContent="";buildInv()}
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("#nav button").forEach(function(b){b.onclick=function(){var n=+b.dataset.s;if(n===0||st.signed)show(n)}});
+
+/* customer: review and sign */
+$("lines").innerHTML=rows();
+var cv=$("sig"),cx=cv.getContext("2d"),dr=false;
+function size(){var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;cv.width=Math.max(1,r.width*d);cv.height=Math.max(1,r.height*d);cx.setTransform(d,0,0,d,0,0);cx.lineWidth=2.5;cx.lineCap="round";cx.strokeStyle=getComputedStyle(document.body).color}
+function pos(e){var r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+cv.addEventListener("pointerdown",function(e){dr=true;var p=pos(e);cx.beginPath();cx.moveTo(p[0],p[1]);cv.setPointerCapture(e.pointerId)});
+cv.addEventListener("pointermove",function(e){if(!dr)return;var p=pos(e);cx.lineTo(p[0],p[1]);cx.stroke();$("appr").disabled=false});
+cv.addEventListener("pointerup",function(){dr=false});
+function clr(){size();cx.clearRect(0,0,cv.width,cv.height);$("appr").disabled=true}
+$("clr").onclick=clr;
+$("appr").onclick=function(){st.signed=true;st.tx=10000000+Math.floor(Math.random()*89999999);show(1)};
+
+/* email */
+function buildMail(){$("mtx").textContent="#"+st.tx;$("mtot").textContent=money(TOTAL)}
+$("viewinv").onclick=function(){show(2)};
+
+/* invoice and payment */
+var NETLAB={Comdata:"Comdata Express Code",EFS:"EFS check or money code","T-Chek":"T-Chek code"};
+function buildInv(){$("inv").innerHTML=rows();$("pay").textContent="Pay "+money(TOTAL)}
+document.querySelectorAll("#nets button").forEach(function(b){b.onclick=function(){
+  st.net=b.dataset.n;
+  document.querySelectorAll("#nets button").forEach(function(x){var on=x===b;x.classList.toggle("on",on);x.setAttribute("aria-pressed",on)});
+  $("mclab").textContent=NETLAB[st.net];
+}});
+$("tgood").onclick=function(){var s=digits(10);if(/0000$/.test(s))s=s.slice(0,6)+"4821";$("mc").value=s};
+$("tbad").onclick=function(){$("mc").value="1234560000"};
+
+function runSteps(list,final){
+  var ul=$("vsteps");ul.innerHTML="";var i=0;
+  (function next(){
+    if(i>=list.length){final();return}
+    var li=document.createElement("li");li.textContent=list[i];ul.appendChild(li);i++;
+    setTimeout(next,700);
+  })();
+}
+function finishPay(label,code,auth){
+  $("rec").innerHTML="<tr><td>Work order</td><td>WO-1046</td></tr><tr><td>Customer</td><td>Sample Freight LLC</td></tr><tr><td>Method</td><td>"+esc(label)+"</td></tr><tr><td>Code</td><td>•••• "+esc(code.slice(-4))+"</td></tr><tr><td>Authorization</td><td>"+esc(auth)+"</td></tr><tr><td>Signed</td><td>Yes</td></tr><tr class='tot'><td>Paid</td><td>"+money(TOTAL)+"</td></tr>";
+  $("payform").hidden=true;$("payok").hidden=false;window.scrollTo(0,0);
+}
+$("pay").onclick=function(){
+  var e=$("perr");e.textContent="";
+  var b=$("pay"),code=$("mc").value.replace(/\D/g,"");
+  if(code.length<6){e.textContent="Enter the full code, or tap Test code.";$("mc").focus();return}
+  if(st.used[code]){e.textContent="This code was already used. Ask the carrier for a new one.";return}
+  b.disabled=true;
+  var bad=/0000$/.test(code),net=st.net;
+  runSteps(["Sending the code to "+net+"…","Checking amount and merchant…"],function(){
+    var ul=$("vsteps"),li=document.createElement("li");
+    if(bad){
+      li.className="bad";li.textContent=net+" declined the code: the amount or merchant doesn't match.";ul.appendChild(li);
+      e.textContent="The payment didn't go through. Check the code with the carrier.";b.disabled=false;return;
+    }
+    var auth="A"+digits(6);
+    li.className="good";li.textContent="Authorization received: "+auth;ul.appendChild(li);
+    st.used[code]=true;
+    setTimeout(function(){b.disabled=false;finishPay(net+" · code",code,auth)},700);
+  });
+};
+$("again").onclick=function(){
+  st.signed=false;
+  $("payform").hidden=false;$("payok").hidden=true;$("vsteps").innerHTML="";$("mc").value="";$("perr").textContent="";
+  ["fn","ln","dn","un","tn"].forEach(function(i){$(i).value=""});
+  show(0);
+};
+show(0);
+</script>
+</body>
+</html>
